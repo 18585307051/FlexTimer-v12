@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexTimer v11</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+</head>
+
+<body>
+    <div id="app-container">
+        <!-- 顶部标题栏 -->
+        <header id="header">
+            <div class="header-left">
+                <span class="app-title">FlexTimer v11</span>
+            </div>
+            <div class="header-center drag-region"></div>
+            <div class="header-right">
+                <button class="header-btn" id="btn-review" title="复盘">
+                    <span class="icon">📊</span>
+                    <span class="label">复盘</span>
+                </button>
+                <button class="header-btn" id="btn-reset" title="重置">
+                    <span class="icon">🔄</span>
+                    <span class="label">重置</span>
+                </button>
+                <button class="header-btn" id="btn-agenda" title="议程">
+                    <span class="icon">📋</span>
+                    <span class="label">议程</span>
+                </button>
+                <button class="header-btn" id="btn-appearance" title="外观">
+                    <span class="icon">🎨</span>
+                    <span class="label">外观</span>
+                </button>
+                <button class="header-btn" id="btn-alert" title="提醒">
+                    <span class="icon">🔔</span>
+                    <span class="label">提醒</span>
+                </button>
+                <button class="header-btn" id="btn-settings" title="设置">
+                    <span class="icon">⚙️</span>
+                    <span class="label">设置</span>
+                </button>
+            </div>
+            <button class="window-btn close-btn" id="btn-close" title="关闭">×</button>
+        </header>
+
+        <!-- 主内容区 -->
+        <main id="main-content">
+            <!-- 计时区域 -->
+            <section id="timer-zone">
+                <div id="current-agenda-title">点击"议程"添加第一个议题</div>
+                <div id="timer-display">00:00</div>
+                <div id="timer-status"></div>
+            </section>
+
+            <!-- 底部控制栏 -->
+            <div id="control-bar">
+                <button class="control-btn primary" id="btn-start">开始</button>
+                <button class="control-btn" id="btn-skip">跳过</button>
+                <button class="control-btn toggle" id="btn-overtime">
+                    <span class="toggle-label">超时延长</span>
+                    <span class="toggle-switch off"></span>
+                </button>
+            </div>
+        </main>
+
+        <!-- 侧边栏 -->
+        <aside id="sidebar" class="collapsed">
+            <div id="sidebar-header">
+                <span>议程列表</span>
+                <button class="sidebar-close-btn" id="btn-sidebar-close">×</button>
+            </div>
+            <div id="list-zone"></div>
+            <button class="add-btn" id="btn-add-agenda">+ 添加议程</button>
+        </aside>
+    </div>
+
+    <!-- 弹窗遮罩 -->
+    <div id="popup-overlay" class="hidden">
+        <!-- 添加议程弹窗 -->
+        <div id="popup-add" class="popup-card hidden">
+            <h3>添加议程</h3>
+            <div class="form-group">
+                <label for="input-title">议题名称</label>
+                <input type="text" id="input-title" placeholder="例如：项目介绍">
+            </div>
+            <div class="form-group">
+                <label for="input-duration">计划时长 (分钟)</label>
+                <input type="number" id="input-duration" placeholder="5" min="1" value="5">
+            </div>
+            <div class="popup-actions">
+                <button class="popup-btn cancel" id="btn-cancel-add">取消</button>
+                <button class="popup-btn confirm" id="btn-confirm-add">确认</button>
+            </div>
+        </div>
+
+        <!-- 外观设置弹窗 -->
+        <div id="popup-appearance" class="popup-card hidden">
+            <h3>外观设置</h3>
+            <div class="form-group">
+                <label for="input-font-color">字体颜色</label>
+                <input type="color" id="input-font-color" value="#00ff00">
+            </div>
+            <div class="form-group">
+                <label for="input-font-size">字体大小: <span id="font-size-value">80</span>px</label>
+                <input type="range" id="input-font-size" min="40" max="200" value="80">
+            </div>
+            <div class="form-group">
+                <label for="input-opacity">窗口透明度: <span id="opacity-value">100</span>%</label>
+                <input type="range" id="input-opacity" min="20" max="100" value="100">
+            </div>
+            <div class="popup-actions">
+                <button class="popup-btn confirm" id="btn-close-appearance">关闭</button>
+            </div>
+        </div>
+
+        <!-- 提醒设置弹窗 -->
+        <div id="popup-alert" class="popup-card hidden">
+            <h3>提醒设置</h3>
+            <div class="form-group">
+                <label for="input-warning-seconds">倒计时预警 (秒)</label>
+                <input type="number" id="input-warning-seconds" placeholder="10" min="0" value="10">
+            </div>
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="input-sound-enabled" checked>
+                <label for="input-sound-enabled">启用声音提醒</label>
+            </div>
+            <div class="popup-actions">
+                <button class="popup-btn confirm" id="btn-close-alert">关闭</button>
+            </div>
+        </div>
+
+        <!-- 设置弹窗 -->
+        <div id="popup-settings" class="popup-card hidden">
+            <h3>设置</h3>
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="input-always-on-top">
+                <label for="input-always-on-top">窗口置顶</label>
+            </div>
+            <div class="popup-actions">
+                <button class="popup-btn confirm" id="btn-close-settings">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>
