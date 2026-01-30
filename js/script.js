@@ -303,11 +303,33 @@ function renderAgendaList() {
         // 状态图标
         let statusIcon = '';
         if (agenda.status === 'done') {
-            statusIcon = '<span class="status-icon done">✓</span>';
+            statusIcon = `
+                <div class="status-icon done">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="12" fill="#4CAF50"/>
+                        <path d="M7 12L10 15L17 8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>`;
         } else if (index === currentIndex && isRunning) {
-            statusIcon = '<span class="status-icon active">◉</span>';
+            statusIcon = `
+                <div class="status-icon active">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                         <circle cx="12" cy="12" r="12" fill="#0078d4" opacity="0.2"/>
+                         <circle cx="12" cy="12" r="6" fill="#0078d4">
+                            <animate attributeName="r" values="6;8;6" dur="1.5s" repeatCount="indefinite" />
+                            <animate attributeName="opacity" values="1;0.6;1" dur="1.5s" repeatCount="indefinite" />
+                         </circle>
+                    </svg>
+                </div>`;
         } else {
-            statusIcon = '<span class="status-icon pending">○</span>';
+            // Pending - Orange Clock
+            statusIcon = `
+                <div class="status-icon pending">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                         <circle cx="12" cy="12" r="12" fill="#F5A623"/>
+                         <path d="M12 7V12L15 15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>`;
         }
 
         card.innerHTML = `
@@ -905,6 +927,13 @@ function confirmAddAgenda() {
     }
     if (!duration || duration < 1) {
         alert('请输入有效的时长');
+        return;
+    }
+
+    // 检查是否有重复名称
+    const isDuplicate = agendas.some(agenda => agenda.title === title);
+    if (isDuplicate) {
+        alert('该议程已存在');
         return;
     }
 

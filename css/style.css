@@ -391,21 +391,15 @@ body {
     align-items: center;
     justify-content: center;
     margin-right: 8px;
-    font-size: 18px;
+    flex-shrink: 0;
 }
 
-.status-icon.done {
-    color: #44cc44;
+.status-icon svg {
+    width: 100%;
+    height: 100%;
 }
 
-.status-icon.active {
-    color: var(--blue);
-    animation: pulse 1s ease-in-out infinite;
-}
-
-.status-icon.pending {
-    color: #999;
-}
+/* Colors are now handled inside the SVG */
 
 .card-delete {
     width: 28px;
