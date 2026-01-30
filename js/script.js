@@ -95,7 +95,9 @@ function renderAgendaList() {
     agendas.forEach((agenda, index) => {
         const card = document.createElement('div');
         card.className = 'card';
-        if (index === currentIndex && isRunning) card.classList.add('active');
+        if (index === currentIndex) {
+            card.classList.add(isRunning ? 'active' : 'selected');
+        }
         if (agenda.status === 'done') card.classList.add('done');
         card.dataset.index = index;
 
@@ -230,14 +232,72 @@ function handleTimer() {
         timerInterval = null;
         isRunning = false;
         isPaused = true;
+        syncUI();
     } else {
         // 开始 / 继续
-        isRunning = true;
-        isPaused = false;
-        timerInterval = setInterval(tick, 1000);
+        if (!isPaused) {
+            // 首次开始，显示倒计时动画
+            showCountdownAnimation(() => {
+                startTimer();
+            });
+        } else {
+            // 从暂停继续
+            startTimer();
+        }
     }
+}
 
+function startTimer() {
+    isRunning = true;
+    isPaused = false;
+    timerInterval = setInterval(tick, 1000);
     syncUI();
+}
+
+function showCountdownAnimation(callback) {
+    const overlay = document.createElement('div');
+    overlay.id = 'countdown-overlay';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    `;
+
+    const countdownText = document.createElement('div');
+    countdownText.style.cssText = `
+        font-size: 150px;
+        font-weight: bold;
+        color: var(--blue);
+        text-shadow: 0 0 50px var(--blue);
+        animation: countdownPulse 1s ease-in-out;
+    `;
+
+    overlay.appendChild(countdownText);
+    document.body.appendChild(overlay);
+
+    let count = 3;
+    countdownText.textContent = count;
+
+    const countInterval = setInterval(() => {
+        count--;
+        if (count > 0) {
+            countdownText.textContent = count;
+            countdownText.style.animation = 'none';
+            countdownText.offsetHeight; // Trigger reflow
+            countdownText.style.animation = 'countdownPulse 1s ease-in-out';
+        } else {
+            clearInterval(countInterval);
+            overlay.remove();
+            callback();
+        }
+    }, 1000);
 }
 
 function skipToNext() {
@@ -438,11 +498,21 @@ function bindEvents() {
         }
     });
 
-    // 议程列表删除按钮
+    // 议程列表删除按钮和卡片点击
     elements.listZone.addEventListener('click', (e) => {
         if (e.target.classList.contains('card-delete')) {
             const index = parseInt(e.target.dataset.index, 10);
             deleteAgenda(index);
+        } else {
+            // 点击卡片切换到该议程（仅限未运行时）
+            const card = e.target.closest('.card');
+            if (card && !isRunning) {
+                const index = parseInt(card.dataset.index, 10);
+                if (!isNaN(index) && index !== currentIndex) {
+                    currentIndex = index;
+                    syncUI();
+                }
+            }
         }
     });
 }
