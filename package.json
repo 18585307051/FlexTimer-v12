@@ -11,8 +11,8 @@
     "author": "18585307051",
     "license": "MIT",
     "devDependencies": {
-        "electron": "^28.0.0",
-        "electron-builder": "^24.9.1"
+        "electron": "^20.3.12",
+        "electron-builder": "^23.6.0"
     },
     "build": {
         "appId": "com.flextimer.v11",
