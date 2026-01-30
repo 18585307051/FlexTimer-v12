@@ -100,31 +100,64 @@
         <div id="popup-appearance" class="popup-card popup-appearance hidden">
             <h3>外观设置</h3>
 
-            <!-- 字体颜色区块 -->
-            <div class="appearance-section">
-                <div class="section-label">字体颜色</div>
-                <div class="color-picker-row">
-                    <input type="color" id="input-font-color" class="color-input" value="#6B8AFF">
-                    <div class="color-gradient" id="color-gradient"></div>
-                    <div class="color-preview-timer" id="color-preview">05:30</div>
+            <!-- ===== 倒计时区域 ===== -->
+            <div class="appearance-group">
+                <div class="group-title">📊 倒计时</div>
+
+                <!-- 倒计时字体颜色 -->
+                <div class="appearance-section">
+                    <div class="section-label">字体颜色</div>
+                    <div class="color-picker-row">
+                        <input type="color" id="input-timer-color" class="color-input" value="#00ff00">
+                        <div class="color-gradient" id="timer-color-gradient"></div>
+                        <div class="color-preview-timer" id="timer-color-preview">05:30</div>
+                    </div>
+                </div>
+
+                <!-- 倒计时字体大小 -->
+                <div class="appearance-section">
+                    <div class="section-label">字体大小</div>
+                    <div class="slider-container">
+                        <span class="slider-min">40px</span>
+                        <input type="range" id="input-timer-size" class="styled-slider" min="40" max="400" value="80">
+                        <span class="slider-max">400px</span>
+                    </div>
+                    <div class="size-preview">
+                        <span id="timer-size-preview">05:30</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- 字体大小区块 -->
-            <div class="appearance-section">
-                <div class="section-label">字体大小</div>
-                <div class="slider-container">
-                    <span class="slider-min">40px</span>
-                    <input type="range" id="input-font-size" class="styled-slider" min="40" max="400" value="80">
-                    <span class="slider-max">400px</span>
+            <!-- ===== 界面元素区域 ===== -->
+            <div class="appearance-group">
+                <div class="group-title">🎨 界面元素</div>
+
+                <!-- UI字体颜色 -->
+                <div class="appearance-section">
+                    <div class="section-label">字体颜色</div>
+                    <div class="color-picker-row">
+                        <input type="color" id="input-ui-color" class="color-input" value="#ffffff">
+                        <div class="color-gradient" id="ui-color-gradient"></div>
+                        <div class="color-preview-ui" id="ui-color-preview">按钮</div>
+                    </div>
                 </div>
-                <div class="size-preview">
-                    <span id="size-preview-timer">05:30</span>
+
+                <!-- UI字体大小 -->
+                <div class="appearance-section">
+                    <div class="section-header">
+                        <span class="section-label">字体大小</span>
+                        <span class="section-value" id="ui-size-value">14px</span>
+                    </div>
+                    <div class="slider-container">
+                        <span class="slider-min">12px</span>
+                        <input type="range" id="input-ui-size" class="styled-slider" min="12" max="24" value="14">
+                        <span class="slider-max">24px</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- 窗口透明度区块 -->
-            <div class="appearance-section">
+            <!-- ===== 窗口透明度 ===== -->
+            <div class="appearance-section" style="margin-top: 12px;">
                 <div class="section-header">
                     <span class="section-label">窗口透明度</span>
                     <span class="section-value" id="opacity-value">100%</span>

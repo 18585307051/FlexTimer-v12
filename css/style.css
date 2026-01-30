@@ -10,6 +10,8 @@
     --border-color: rgba(255, 255, 255, 0.15);
     --timer-color: #00ff00;
     --timer-size: 80px;
+    --ui-color: #ffffff;
+    --ui-size: 14px;
     --danger: #ff4444;
     --success: #44cc44;
     --warning: #ffaa00;
@@ -89,10 +91,10 @@ body {
     background: transparent;
     border: none;
     border-radius: 6px;
-    color: var(--text-secondary);
+    color: var(--ui-color);
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 12px;
+    font-size: var(--ui-size);
 }
 
 .header-btn:hover {
@@ -148,7 +150,7 @@ body {
 
 #current-agenda-title {
     font-size: 18px;
-    color: var(--text-secondary);
+    color: var(--ui-color);
     margin-bottom: 16px;
     max-width: 80%;
     overflow: hidden;
@@ -188,8 +190,8 @@ body {
 }
 
 #timer-status {
-    font-size: 14px;
-    color: var(--text-secondary);
+    font-size: var(--ui-size);
+    color: var(--ui-color);
     margin-top: 12px;
     height: 20px;
 }
@@ -211,9 +213,9 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 8px;
     background: var(--bg-glass);
-    color: var(--text-primary);
+    color: var(--ui-color);
     cursor: pointer;
-    font-size: 14px;
+    font-size: var(--ui-size);
     font-weight: 500;
     transition: all 0.2s ease;
 }
@@ -301,7 +303,7 @@ body {
     height: 28px;
     border: none;
     background: transparent;
-    color: var(--text-secondary);
+    color: var(--ui-color);
     cursor: pointer;
     font-size: 18px;
     border-radius: 4px;
@@ -438,9 +440,9 @@ body {
     border: 2px dashed var(--border-color);
     border-radius: 8px;
     background: transparent;
-    color: var(--text-secondary);
+    color: var(--ui-color);
     cursor: pointer;
-    font-size: 14px;
+    font-size: var(--ui-size);
     transition: all 0.2s ease;
 }
 
@@ -717,7 +719,36 @@ body {
 
 /* ===== Appearance Popup Specific Styles ===== */
 .popup-appearance {
-    width: 360px;
+    width: 380px;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.appearance-group {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 16px;
+    background: rgba(25, 30, 45, 0.6);
+}
+
+.group-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.color-preview-ui {
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: rgba(50, 55, 70, 0.8);
+    padding: 8px 16px;
+    border-radius: 8px;
 }
 
 .appearance-section {
@@ -861,7 +892,7 @@ body {
     padding: 10px 16px;
     border: none;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: var(--ui-size);
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;

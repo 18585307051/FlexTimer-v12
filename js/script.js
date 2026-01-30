@@ -9,10 +9,12 @@ let countdownPhase = 0; // 0: 无, 3/2/1: 倒数
 
 // ===== 用户设置 =====
 let settings = {
-    fontColor: '#00ff00',
-    fontSize: 80,
+    timerColor: '#00ff00',
+    timerSize: 80,
+    uiColor: '#ffffff',
+    uiSize: 14,
     opacity: 100,
-    warningSeconds: 10,
+    warningSeconds: 120,
     soundEnabled: true,
     alwaysOnTop: false
 };
@@ -60,13 +62,13 @@ function saveData() {
 }
 
 function loadSettings() {
-    const keys = ['fontColor', 'fontSize', 'opacity', 'warningSeconds', 'soundEnabled', 'alwaysOnTop'];
+    const keys = ['timerColor', 'timerSize', 'uiColor', 'uiSize', 'opacity', 'warningSeconds', 'soundEnabled', 'alwaysOnTop'];
     keys.forEach(key => {
         const saved = localStorage.getItem(`flex_timer_${key}`);
         if (saved !== null) {
             if (key === 'soundEnabled' || key === 'alwaysOnTop') {
                 settings[key] = saved === 'true';
-            } else if (key === 'fontColor') {
+            } else if (key.includes('Color')) {
                 settings[key] = saved;
             } else {
                 settings[key] = parseInt(saved, 10);
@@ -180,12 +182,20 @@ function updateButtonStates() {
 }
 
 function applySettings() {
-    document.documentElement.style.setProperty('--timer-color', settings.fontColor);
-    document.documentElement.style.setProperty('--timer-size', settings.fontSize + 'px');
+    // 倒计时样式
+    document.documentElement.style.setProperty('--timer-color', settings.timerColor);
+    document.documentElement.style.setProperty('--timer-size', settings.timerSize + 'px');
+
+    // UI样式
+    document.documentElement.style.setProperty('--ui-color', settings.uiColor);
+    document.documentElement.style.setProperty('--ui-size', settings.uiSize + 'px');
 
     // 更新设置面板的值
-    $('input-font-color').value = settings.fontColor;
-    $('input-font-size').value = settings.fontSize;
+    $('input-timer-color').value = settings.timerColor;
+    $('input-timer-size').value = settings.timerSize;
+    $('input-ui-color').value = settings.uiColor;
+    $('input-ui-size').value = settings.uiSize;
+    $('ui-size-value').textContent = settings.uiSize + 'px';
     $('input-opacity').value = settings.opacity;
     $('opacity-value').textContent = settings.opacity + '%';
     $('input-warning-seconds').value = settings.warningSeconds;
@@ -203,26 +213,38 @@ function applySettings() {
 }
 
 function updateAppearancePreview() {
-    // 颜色预览
-    const colorPreview = $('color-preview');
-    if (colorPreview) {
-        colorPreview.style.color = settings.fontColor;
+    // 倒计时颜色预览
+    const timerColorPreview = $('timer-color-preview');
+    if (timerColorPreview) {
+        timerColorPreview.style.color = settings.timerColor;
     }
 
-    // 大小预览
-    const sizePreview = $('size-preview-timer');
-    if (sizePreview) {
-        sizePreview.style.color = settings.fontColor;
-        // 根据设置动态缩放预览字体大小 (最大显示80px)
-        const previewSize = Math.min(settings.fontSize, 80);
-        sizePreview.style.fontSize = previewSize + 'px';
+    // 倒计时大小预览
+    const timerSizePreview = $('timer-size-preview');
+    if (timerSizePreview) {
+        timerSizePreview.style.color = settings.timerColor;
+        const previewSize = Math.min(settings.timerSize, 80);
+        timerSizePreview.style.fontSize = previewSize + 'px';
     }
 
-    // 更新渐变条颜色
-    const gradient = $('color-gradient');
-    if (gradient) {
-        const baseColor = settings.fontColor;
-        gradient.style.background = `linear-gradient(90deg, ${baseColor} 0%, ${lightenColor(baseColor, 30)} 50%, ${lightenColor(baseColor, 60)} 100%)`;
+    // 倒计时渐变条
+    const timerGradient = $('timer-color-gradient');
+    if (timerGradient) {
+        const baseColor = settings.timerColor;
+        timerGradient.style.background = `linear-gradient(90deg, ${baseColor} 0%, ${lightenColor(baseColor, 30)} 50%, ${lightenColor(baseColor, 60)} 100%)`;
+    }
+
+    // UI颜色预览
+    const uiColorPreview = $('ui-color-preview');
+    if (uiColorPreview) {
+        uiColorPreview.style.color = settings.uiColor;
+    }
+
+    // UI渐变条
+    const uiGradient = $('ui-color-gradient');
+    if (uiGradient) {
+        const baseColor = settings.uiColor;
+        uiGradient.style.background = `linear-gradient(90deg, ${baseColor} 0%, ${lightenColor(baseColor, 30)} 50%, ${lightenColor(baseColor, 60)} 100%)`;
     }
 }
 
@@ -503,14 +525,27 @@ function bindEvents() {
     });
 
     // 外观设置
-    $('input-font-color').addEventListener('input', (e) => {
-        settings.fontColor = e.target.value;
+    // 外观设置
+    // 倒计时设置
+    $('input-timer-color').addEventListener('input', (e) => {
+        settings.timerColor = e.target.value;
         updateAppearancePreview();
     });
-    $('input-font-size').addEventListener('input', (e) => {
-        settings.fontSize = parseInt(e.target.value, 10);
+    $('input-timer-size').addEventListener('input', (e) => {
+        settings.timerSize = parseInt(e.target.value, 10);
         updateAppearancePreview();
     });
+
+    // UI设置
+    $('input-ui-color').addEventListener('input', (e) => {
+        settings.uiColor = e.target.value;
+        updateAppearancePreview();
+    });
+    $('input-ui-size').addEventListener('input', (e) => {
+        settings.uiSize = parseInt(e.target.value, 10);
+        updateAppearancePreview();
+    });
+
     $('input-opacity').addEventListener('input', (e) => {
         settings.opacity = parseInt(e.target.value, 10);
         $('opacity-value').textContent = settings.opacity + '%';
