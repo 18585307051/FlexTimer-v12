@@ -119,16 +119,35 @@
         <!-- 提醒设置弹窗 -->
         <div id="popup-alert" class="popup-card hidden">
             <h3>提醒设置</h3>
-            <div class="form-group">
-                <label for="input-warning-seconds">倒计时预警 (秒)</label>
-                <input type="number" id="input-warning-seconds" placeholder="10" min="0" value="10">
+
+            <div class="form-row">
+                <span class="form-label">倒计时预警(秒)</span>
+                <input type="number" id="input-warning-seconds" class="input-small" placeholder="120" min="0"
+                    value="120">
             </div>
-            <div class="form-group checkbox-group">
-                <input type="checkbox" id="input-sound-enabled" checked>
-                <label for="input-sound-enabled">启用声音提醒</label>
+
+            <div class="form-row">
+                <span class="form-label">声音提醒</span>
+                <label class="switch">
+                    <input type="checkbox" id="input-sound-enabled" checked>
+                    <span class="slider"></span>
+                </label>
             </div>
+
+            <div class="preview-section">
+                <div class="preview-label">Preview</div>
+                <div class="preview-content">
+                    <div class="preview-timer">-00:15</div>
+                    <div class="alarm-icon">
+                        <div class="alarm-light"></div>
+                        <div class="alarm-base">🚨</div>
+                    </div>
+                </div>
+            </div>
+
             <div class="popup-actions">
-                <button class="popup-btn confirm" id="btn-close-alert">关闭</button>
+                <button class="popup-btn cancel" id="btn-cancel-alert">取消</button>
+                <button class="popup-btn confirm" id="btn-save-alert">保存</button>
             </div>
         </div>
 

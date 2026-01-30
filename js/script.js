@@ -488,14 +488,20 @@ function bindEvents() {
 
     // 提醒设置
     $('input-warning-seconds').addEventListener('change', (e) => {
-        settings.warningSeconds = parseInt(e.target.value, 10) || 10;
+        settings.warningSeconds = parseInt(e.target.value, 10) || 120;
         saveSettings();
     });
     $('input-sound-enabled').addEventListener('change', (e) => {
         settings.soundEnabled = e.target.checked;
         saveSettings();
     });
-    $('btn-close-alert').addEventListener('click', hidePopup);
+    $('btn-cancel-alert').addEventListener('click', hidePopup);
+    $('btn-save-alert').addEventListener('click', () => {
+        settings.warningSeconds = parseInt($('input-warning-seconds').value, 10) || 120;
+        settings.soundEnabled = $('input-sound-enabled').checked;
+        saveSettings();
+        hidePopup();
+    });
 
     // 通用设置
     $('input-always-on-top').addEventListener('change', (e) => {

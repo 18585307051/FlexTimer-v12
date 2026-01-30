@@ -561,6 +561,160 @@ body {
     margin-bottom: 0;
 }
 
+/* ===== Alert Popup Specific Styles ===== */
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.form-label {
+    font-size: 15px;
+    color: var(--text-primary);
+}
+
+.input-small {
+    width: 80px;
+    padding: 10px 12px;
+    background: rgba(50, 50, 70, 0.8);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 16px;
+    text-align: center;
+    outline: none;
+}
+
+.input-small:focus {
+    border-color: var(--blue);
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(100, 100, 120, 0.6);
+    border-radius: 26px;
+    transition: 0.3s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.switch input:checked+.slider {
+    background: var(--blue);
+}
+
+.switch input:checked+.slider:before {
+    transform: translateX(24px);
+}
+
+/* Preview Section */
+.preview-section {
+    background: rgba(30, 30, 45, 0.9);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 20px 0;
+}
+
+.preview-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
+.preview-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preview-timer {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 42px;
+    font-weight: bold;
+    color: #ff4444;
+    text-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
+}
+
+/* Alarm Icon */
+.alarm-icon {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.alarm-base {
+    font-size: 40px;
+    z-index: 2;
+    animation: alarmShake 0.3s ease-in-out infinite;
+}
+
+.alarm-light {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, rgba(255, 0, 0, 0.4) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: alarmPulse 0.6s ease-in-out infinite;
+}
+
+@keyframes alarmShake {
+
+    0%,
+    100% {
+        transform: rotate(-3deg);
+    }
+
+    50% {
+        transform: rotate(3deg);
+    }
+}
+
+@keyframes alarmPulse {
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(1.3);
+    }
+}
+
 .popup-actions {
     display: flex;
     gap: 12px;
