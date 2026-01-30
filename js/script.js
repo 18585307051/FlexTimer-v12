@@ -50,10 +50,36 @@ function init() {
     loadData();
     loadSettings();
     loadHistory();
+    generateMockData(); // Generates test data for Jan 28/29
     bindEvents();
     syncUI();
     applySettings();
     initSortable();
+}
+
+function generateMockData() {
+    const dates = ['2026-01-28', '2026-01-29'];
+    let changed = false;
+
+    dates.forEach(date => {
+        if (!historyData[date]) {
+            historyData[date] = [];
+            for (let i = 1; i <= 20; i++) {
+                historyData[date].push({
+                    title: `测试议程 ${i} - ${date}`,
+                    plan: Math.floor(Math.random() * 30) + 15, // 15-45 mins
+                    used: Math.floor(Math.random() * 30) + 15,
+                    status: 'done',
+                    timestamp: new Date(date).getTime() + i * 100000
+                });
+            }
+            changed = true;
+        }
+    });
+
+    if (changed) {
+        saveHistory();
+    }
 }
 
 // ===== 数据持久化 =====
@@ -116,6 +142,8 @@ function saveToHistory(agenda) {
         historyData[today] = [];
     }
 
+    // Check if duplicate (optional)
+
     const record = {
         title: agenda.title,
         plan: agenda.plan,
@@ -144,7 +172,9 @@ function renderCalendar(date) {
     const year = date.getFullYear();
     const month = date.getMonth(); // 0-11
 
-    elements.calendarCurrentMonth.textContent = `${year}年 ${month + 1}月`;
+    if (elements.calendarCurrentMonth) {
+        elements.calendarCurrentMonth.textContent = `${year}年 ${month + 1}月`;
+    }
 
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
@@ -169,6 +199,7 @@ function renderCalendar(date) {
         for (let i = 0; i < startDayOfWeek; i++) {
             const div = document.createElement('div');
             div.className = 'date-cell other-month';
+            div.textContent = '';
             grid.appendChild(div);
         }
 
@@ -177,8 +208,6 @@ function renderCalendar(date) {
 
         for (let i = 1; i <= daysInMonth; i++) {
             const d = new Date(year, month, i);
-            const dateStr = d.toISOString().slice(0, 10); // Use local time for date string to avoid timezone issues with simple ISO slice if not careful, but here simple usage
-            // Correct logic for YYYY-MM-DD in local time
             const y = d.getFullYear();
             const m = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
@@ -199,7 +228,7 @@ function renderCalendar(date) {
 
             div.addEventListener('click', () => {
                 selectedHistoryDate = localDateStr;
-                renderCalendar(currentCalendarDate); // Refresh to update selection
+                renderCalendar(currentCalendarDate); // Refresh to update selection highlight
                 renderHistoryList(localDateStr);
             });
 
@@ -213,6 +242,11 @@ function renderHistoryList(dateStr) {
     if (!container) return;
 
     container.innerHTML = '';
+
+    if (!dateStr) {
+        container.innerHTML = '<div class="empty-hint">请选择日期</div>';
+        return;
+    }
 
     // Format Date Label
     const date = new Date(dateStr);
@@ -332,13 +366,26 @@ function updateTimerDisplay() {
 }
 
 function updateButtonStates() {
-    if (!isRunning) {
-        elements.btnStart.textContent = isPaused ? '继续' : '开始';
+    const current = agendas[currentIndex];
+    if (current && current.status === 'done') {
+        elements.btnStart.textContent = '已完成';
+        elements.btnStart.disabled = true;
+        elements.btnStart.style.opacity = '0.5';
+        elements.btnStart.style.cursor = 'not-allowed';
     } else {
-        elements.btnStart.textContent = '暂停';
+        elements.btnStart.disabled = false;
+        elements.btnStart.style.opacity = '1';
+        elements.btnStart.style.cursor = 'pointer';
+        if (!isRunning) {
+            elements.btnStart.textContent = isPaused ? '继续' : '开始';
+        } else {
+            elements.btnStart.textContent = '暂停';
+        }
     }
 
-    elements.toggleSwitch.classList.toggle('on', overtimeEnabled);
+    if (elements.toggleSwitch) {
+        elements.toggleSwitch.classList.toggle('on', overtimeEnabled);
+    }
 }
 
 function applySettings() {
@@ -454,7 +501,7 @@ function tick() {
 
 function handleTimer() {
     if (agendas.length === 0) {
-        showPopup('add');
+        showPopup('add'); // 会重定向到 manager
         return;
     }
 
@@ -467,6 +514,11 @@ function handleTimer() {
         syncUI();
     } else {
         // 开始 / 继续
+        const current = agendas[currentIndex];
+        if (current && current.status === 'done') {
+            return; // 已完成的议程不能重新开始
+        }
+
         if (!isPaused) {
             // 首次开始，显示倒计时动画
             showCountdownAnimation(() => {
@@ -626,8 +678,8 @@ function showPopup(type) {
     if (type === 'agenda-manager') {
         // Focus title input if visible
         const titleInput = $('input-title');
-        if (titleInput && !titleInput.offsetParent === null) {
-            titleInput.focus();
+        if (titleInput && titleInput.offsetParent !== null) {
+            setTimeout(() => titleInput.focus(), 100);
         }
 
         // Init Calendar
@@ -660,8 +712,9 @@ function switchTab(tabName) {
 
     // Update sections
     document.querySelectorAll('.tab-section').forEach(section => {
-        section.classList.add('hidden');
         section.classList.remove('active');
+        // Small delay to allow display:none to apply before display:block for animation
+        section.classList.add('hidden');
     });
 
     const activeSection = $(`section-${tabName}-agenda`);
@@ -695,33 +748,36 @@ function exportCSV() {
 // ===== 事件绑定 =====
 function bindEvents() {
     // 窗口控制
-    $('btn-close').addEventListener('click', () => {
-        if (window.electronAPI) {
-            window.electronAPI.close();
-        } else {
-            window.close();
-        }
-    });
+    if ($('btn-close')) {
+        $('btn-close').addEventListener('click', () => {
+            if (window.electronAPI) {
+                window.electronAPI.close();
+            } else {
+                window.close();
+            }
+        });
+    }
 
     // 顶部按钮
-    $('btn-review').addEventListener('click', exportCSV);
-    $('btn-reset').addEventListener('click', resetAll);
-    $('btn-agenda').addEventListener('click', toggleSidebar);
-    $('btn-appearance').addEventListener('click', () => showPopup('appearance'));
-    $('btn-alert').addEventListener('click', () => showPopup('alert'));
-    $('btn-settings').addEventListener('click', () => showPopup('settings'));
+    if ($('btn-review')) $('btn-review').addEventListener('click', exportCSV);
+    if ($('btn-reset')) $('btn-reset').addEventListener('click', resetAll);
+    if ($('btn-manage')) $('btn-manage').addEventListener('click', () => showPopup('agenda-manager'));
+    if ($('btn-list')) $('btn-list').addEventListener('click', toggleSidebar);
+    if ($('btn-appearance')) $('btn-appearance').addEventListener('click', () => showPopup('appearance'));
+    if ($('btn-alert')) $('btn-alert').addEventListener('click', () => showPopup('alert'));
+    if ($('btn-settings')) $('btn-settings').addEventListener('click', () => showPopup('settings'));
 
     // 控制栏
-    elements.btnStart.addEventListener('click', handleTimer);
-    elements.btnSkip.addEventListener('click', skipToNext);
-    elements.btnOvertime.addEventListener('click', () => {
+    if (elements.btnStart) elements.btnStart.addEventListener('click', handleTimer);
+    if (elements.btnSkip) elements.btnSkip.addEventListener('click', skipToNext);
+    if (elements.btnOvertime) elements.btnOvertime.addEventListener('click', () => {
         overtimeEnabled = !overtimeEnabled;
         syncUI();
     });
 
     // 侧边栏
-    $('btn-sidebar-close').addEventListener('click', toggleSidebar);
-    $('btn-add-agenda').addEventListener('click', () => showPopup('add'));
+    if ($('btn-sidebar-close')) $('btn-sidebar-close').addEventListener('click', toggleSidebar);
+    if ($('btn-add-agenda')) $('btn-add-agenda').addEventListener('click', () => showPopup('add'));
 
     // 议程管理弹窗事件
     const btnCloseManager = $('btn-close-manager');
@@ -748,57 +804,57 @@ function bindEvents() {
     });
 
     // 添加议程
-    $('btn-confirm-add').addEventListener('click', confirmAddAgenda);
-    $('input-title').addEventListener('keydown', (e) => {
+    if ($('btn-confirm-add')) $('btn-confirm-add').addEventListener('click', confirmAddAgenda);
+    if ($('input-title')) $('input-title').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') confirmAddAgenda();
     });
-    $('input-duration').addEventListener('keydown', (e) => {
+    if ($('input-duration')) $('input-duration').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') confirmAddAgenda();
     });
 
     // 外观设置
     // 倒计时设置
-    $('input-timer-color').addEventListener('input', (e) => {
+    if ($('input-timer-color')) $('input-timer-color').addEventListener('input', (e) => {
         settings.timerColor = e.target.value;
         updateAppearancePreview();
     });
-    $('input-timer-size').addEventListener('input', (e) => {
+    if ($('input-timer-size')) $('input-timer-size').addEventListener('input', (e) => {
         settings.timerSize = parseInt(e.target.value, 10);
         updateAppearancePreview();
     });
 
     // UI设置
-    $('input-ui-color').addEventListener('input', (e) => {
+    if ($('input-ui-color')) $('input-ui-color').addEventListener('input', (e) => {
         settings.uiColor = e.target.value;
         updateAppearancePreview();
     });
-    $('input-ui-size').addEventListener('input', (e) => {
+    if ($('input-ui-size')) $('input-ui-size').addEventListener('input', (e) => {
         settings.uiSize = parseInt(e.target.value, 10);
         updateAppearancePreview();
     });
 
-    $('input-opacity').addEventListener('input', (e) => {
+    if ($('input-opacity')) $('input-opacity').addEventListener('input', (e) => {
         settings.opacity = parseInt(e.target.value, 10);
-        $('opacity-value').textContent = settings.opacity + '%';
+        if ($('opacity-value')) $('opacity-value').textContent = settings.opacity + '%';
     });
-    $('btn-save-appearance').addEventListener('click', () => {
+    if ($('btn-save-appearance')) $('btn-save-appearance').addEventListener('click', () => {
         applySettings();
         saveSettings();
         hidePopup();
     });
-    $('btn-cancel-appearance').addEventListener('click', hidePopup);
+    if ($('btn-cancel-appearance')) $('btn-cancel-appearance').addEventListener('click', hidePopup);
 
     // 提醒设置
-    $('input-warning-seconds').addEventListener('change', (e) => {
+    if ($('input-warning-seconds')) $('input-warning-seconds').addEventListener('change', (e) => {
         settings.warningSeconds = parseInt(e.target.value, 10) || 120;
         saveSettings();
     });
-    $('input-sound-enabled').addEventListener('change', (e) => {
+    if ($('input-sound-enabled')) $('input-sound-enabled').addEventListener('change', (e) => {
         settings.soundEnabled = e.target.checked;
         saveSettings();
     });
-    $('btn-cancel-alert').addEventListener('click', hidePopup);
-    $('btn-save-alert').addEventListener('click', () => {
+    if ($('btn-cancel-alert')) $('btn-cancel-alert').addEventListener('click', hidePopup);
+    if ($('btn-save-alert')) $('btn-save-alert').addEventListener('click', () => {
         settings.warningSeconds = parseInt($('input-warning-seconds').value, 10) || 120;
         settings.soundEnabled = $('input-sound-enabled').checked;
         saveSettings();
@@ -806,12 +862,12 @@ function bindEvents() {
     });
 
     // 通用设置
-    $('input-always-on-top').addEventListener('change', (e) => {
+    if ($('input-always-on-top')) $('input-always-on-top').addEventListener('change', (e) => {
         settings.alwaysOnTop = e.target.checked;
         applySettings();
         saveSettings();
     });
-    $('btn-close-settings').addEventListener('click', hidePopup);
+    if ($('btn-close-settings')) $('btn-close-settings').addEventListener('click', hidePopup);
 
     // 弹窗遮罩点击关闭
     elements.popupOverlay.addEventListener('click', (e) => {
@@ -855,9 +911,7 @@ function confirmAddAgenda() {
     addAgenda(title, duration);
     $('input-title').value = '';
     $('input-duration').value = '5';
-    // 不建议立即关闭，可能用户想继续添加。但原逻辑是关闭的。
-    // 这里保持关闭，或者给个提示？
-    // V1保持关闭
+    // 隐藏弹窗
     hidePopup();
 }
 

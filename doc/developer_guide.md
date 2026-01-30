@@ -1,6 +1,6 @@
 # 开发指南 (Developer Guide)
 
-**项目名称**: FlexTimer v11
+**项目名称**: FlexTimer v12
 **最低要求**:
 - 现代浏览器 (Chrome/Edge/Firefox)
 - 本地 Web 服务器 (推荐 VS Code Live Server 插件)
@@ -10,8 +10,8 @@
 ### 1.1 获取代码
 从 GitHub 克隆仓库：
 ```bash
-git clone https://github.com/18585307051/FlexTimer-v11.git
-cd FlexTimer-v11
+git clone https://github.com/18585307051/FlexTimer-v12.git
+cd FlexTimer-v12
 ```
 
 ### 1.2 运行项目
@@ -27,16 +27,26 @@ cd FlexTimer-v11
 
 ### 2.1 核心方法
 - `syncUI()`: **必调函数**。任何数据的变更（包括排序、添加、删除）都必须紧随 `syncUI()` 调用以刷新视图。
-- `showPopup(type)`: **弹窗路由**。控制弹窗显示逻辑，type 为弹窗 ID 后缀。
+- `showPopup(type)`: **弹窗路由**。控制弹窗显示逻辑，支持重定向（如 `add` -> `agenda-manager`）。
+- `renderCalendar(date)`: **日历渲染**。根据传入日期渲染月历，并检查 `historyData` 标记有点的日期。
+- `renderHistoryList(dateStr)`: **历史列表渲染**。渲染指定日期的已完成议程列表。
+- `saveToHistory(agenda)`: **归档逻辑**。将完成的议程项存入 `historyData` 并持久化。
 - `tick()`: **计时核心**。每秒运行一次，处理剩余时间和超时逻辑。
 
-### 2.2 样式约定
+### 2.2 数据结构
+- **agendas**: 当前待办议程数组。
+- **historyData**: 历史记录对象，Key 为 `YYYY-MM-DD`，Value 为议程数组。
+- **settings**: 全局应用设置。
+
+### 2.3 样式约定
 - **主题色**: `--blue` (`#0078d4`) 和 `--bg-opacity` 必须通过 CSS 变量修改。
 - **布局**: 主容器 `#app-container` 使用 `flex` 布局，侧边栏 `#sidebar` 使用过渡动画 (`transition: width`)。
 - **重要类名**:
     - `.card`: 议程卡片。
     - `.btn`: 通用按钮。
     - `.active`: 当前进行中的议程，高亮显示。
+    - `.popup-agenda-manager`: 议程管理弹窗容器。
+    - `.date-cell`: 日历日期单元格。
 
 ## 3. 注意事项 (Notes)
 - **Sortable.js**: 项目依赖 CDN 引入的 Sortable.js，若需离线部署请下载并在头部本地引入。
