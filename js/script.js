@@ -6,6 +6,7 @@ let isPaused = false;
 let timerInterval = null;
 let overtimeEnabled = true;
 let countdownPhase = 0; // 0: 无, 3/2/1: 倒数
+let historyData = {}; // 日期 -> 议程列表
 
 // ===== 用户设置 =====
 let settings = {
@@ -32,13 +33,23 @@ const elements = {
     btnStart: $('btn-start'),
     btnSkip: $('btn-skip'),
     btnOvertime: $('btn-overtime'),
-    toggleSwitch: document.querySelector('.toggle-switch')
+    toggleSwitch: document.querySelector('.toggle-switch'),
+    // Agenda Manager Elements
+    popupAgendaManager: $('popup-agenda-manager'),
+    calendarGrid: $('calendar-grid'),
+    historyListContainer: $('history-list-container'),
+    historySelectedDate: $('history-selected-date'),
+    calendarCurrentMonth: $('calendar-current-month')
 };
+
+let currentCalendarDate = new Date();
+let selectedHistoryDate = null;
 
 // ===== 初始化 =====
 function init() {
     loadData();
     loadSettings();
+    loadHistory();
     bindEvents();
     syncUI();
     applySettings();
@@ -61,6 +72,21 @@ function saveData() {
     localStorage.setItem('flex_v103_data', JSON.stringify(agendas));
 }
 
+function loadHistory() {
+    const saved = localStorage.getItem('flex_timer_history');
+    if (saved) {
+        try {
+            historyData = JSON.parse(saved);
+        } catch (e) {
+            historyData = {};
+        }
+    }
+}
+
+function saveHistory() {
+    localStorage.setItem('flex_timer_history', JSON.stringify(historyData));
+}
+
 function loadSettings() {
     const keys = ['timerColor', 'timerSize', 'uiColor', 'uiSize', 'opacity', 'warningSeconds', 'soundEnabled', 'alwaysOnTop'];
     keys.forEach(key => {
@@ -80,6 +106,140 @@ function loadSettings() {
 function saveSettings() {
     Object.keys(settings).forEach(key => {
         localStorage.setItem(`flex_timer_${key}`, settings[key].toString());
+    });
+}
+
+// ===== 历史记录逻辑 =====
+function saveToHistory(agenda) {
+    const today = new Date().toISOString().slice(0, 10);
+    if (!historyData[today]) {
+        historyData[today] = [];
+    }
+
+    const record = {
+        title: agenda.title,
+        plan: agenda.plan,
+        used: Math.round(agenda.used / 60), // 保存分钟
+        status: agenda.status,
+        timestamp: Date.now()
+    };
+
+    historyData[today].push(record);
+    saveHistory();
+}
+
+function getHistoryDatesInMonth(year, month) {
+    const dates = [];
+    const prefix = `${year}-${String(month + 1).padStart(2, '0')}`;
+    Object.keys(historyData).forEach(dateStr => {
+        if (dateStr.startsWith(prefix) && historyData[dateStr].length > 0) {
+            dates.push(dateStr);
+        }
+    });
+    return dates;
+}
+
+// ===== 日历逻辑 =====
+function renderCalendar(date) {
+    const year = date.getFullYear();
+    const month = date.getMonth(); // 0-11
+
+    elements.calendarCurrentMonth.textContent = `${year}年 ${month + 1}月`;
+
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+
+    const daysInMonth = lastDay.getDate();
+    const startDayOfWeek = firstDay.getDay(); // 0(Sun) - 6(Sat)
+
+    const grid = elements.calendarGrid;
+    if (grid) {
+        grid.innerHTML = '';
+
+        // Header
+        const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+        weekDays.forEach(d => {
+            const div = document.createElement('div');
+            div.className = 'week-day';
+            div.textContent = d;
+            grid.appendChild(div);
+        });
+
+        // Empty cells for previous month
+        for (let i = 0; i < startDayOfWeek; i++) {
+            const div = document.createElement('div');
+            div.className = 'date-cell other-month';
+            grid.appendChild(div);
+        }
+
+        // Days
+        const activeDates = getHistoryDatesInMonth(year, month);
+
+        for (let i = 1; i <= daysInMonth; i++) {
+            const d = new Date(year, month, i);
+            const dateStr = d.toISOString().slice(0, 10); // Use local time for date string to avoid timezone issues with simple ISO slice if not careful, but here simple usage
+            // Correct logic for YYYY-MM-DD in local time
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const localDateStr = `${y}-${m}-${day}`;
+
+            const div = document.createElement('div');
+            div.className = 'date-cell';
+            div.textContent = i;
+            div.dataset.date = localDateStr;
+
+            if (activeDates.includes(localDateStr)) {
+                div.classList.add('has-data');
+            }
+
+            if (localDateStr === selectedHistoryDate) {
+                div.classList.add('selected');
+            }
+
+            div.addEventListener('click', () => {
+                selectedHistoryDate = localDateStr;
+                renderCalendar(currentCalendarDate); // Refresh to update selection
+                renderHistoryList(localDateStr);
+            });
+
+            grid.appendChild(div);
+        }
+    }
+}
+
+function renderHistoryList(dateStr) {
+    const container = elements.historyListContainer;
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    // Format Date Label
+    const date = new Date(dateStr);
+    const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+    if (elements.historySelectedDate) {
+        elements.historySelectedDate.textContent = `${date.getMonth() + 1}月${date.getDate()}日 (${weekDays[date.getDay()]})`;
+    }
+
+    const list = historyData[dateStr] || [];
+
+    if (list.length === 0) {
+        container.innerHTML = '<div class="empty-hint">该日期无会议记录</div>';
+        return;
+    }
+
+    list.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'history-item';
+
+        div.innerHTML = `
+            <div class="h-info">
+                <div class="h-title">${escapeHtml(item.title)}</div>
+                <div class="h-duration">计划: ${item.plan}分 | 实际: ${item.used}分</div>
+            </div>
+            <div class="h-status">${item.status === 'done' ? '已完成' : '未完成'}</div>
+        `;
+        container.appendChild(div);
     });
 }
 
@@ -191,16 +351,16 @@ function applySettings() {
     document.documentElement.style.setProperty('--ui-size', settings.uiSize + 'px');
 
     // 更新设置面板的值
-    $('input-timer-color').value = settings.timerColor;
-    $('input-timer-size').value = settings.timerSize;
-    $('input-ui-color').value = settings.uiColor;
-    $('input-ui-size').value = settings.uiSize;
-    $('ui-size-value').textContent = settings.uiSize + 'px';
-    $('input-opacity').value = settings.opacity;
-    $('opacity-value').textContent = settings.opacity + '%';
-    $('input-warning-seconds').value = settings.warningSeconds;
-    $('input-sound-enabled').checked = settings.soundEnabled;
-    $('input-always-on-top').checked = settings.alwaysOnTop;
+    if ($('input-timer-color')) $('input-timer-color').value = settings.timerColor;
+    if ($('input-timer-size')) $('input-timer-size').value = settings.timerSize;
+    if ($('input-ui-color')) $('input-ui-color').value = settings.uiColor;
+    if ($('input-ui-size')) $('input-ui-size').value = settings.uiSize;
+    if ($('ui-size-value')) $('ui-size-value').textContent = settings.uiSize + 'px';
+    if ($('input-opacity')) $('input-opacity').value = settings.opacity;
+    if ($('opacity-value')) $('opacity-value').textContent = settings.opacity + '%';
+    if ($('input-warning-seconds')) $('input-warning-seconds').value = settings.warningSeconds;
+    if ($('input-sound-enabled')) $('input-sound-enabled').checked = settings.soundEnabled;
+    if ($('input-always-on-top')) $('input-always-on-top').checked = settings.alwaysOnTop;
 
     // 更新预览
     updateAppearancePreview();
@@ -376,8 +536,9 @@ function skipToNext() {
     if (agendas.length === 0) return;
 
     const current = agendas[currentIndex];
-    if (current) {
+    if (current && current.status !== 'done') {
         current.status = 'done';
+        saveToHistory(current);
     }
 
     currentIndex++;
@@ -450,16 +611,64 @@ function deleteAgenda(index) {
 function showPopup(type) {
     elements.popupOverlay.classList.remove('hidden');
     document.querySelectorAll('.popup-card').forEach(p => p.classList.add('hidden'));
-    $(`popup-${type}`).classList.remove('hidden');
 
+    // 重定向 'add' 到 'agenda-manager'
     if (type === 'add') {
-        $('input-title').focus();
+        type = 'agenda-manager';
+        switchTab('new');
+    }
+
+    const popup = $(`popup-${type}`);
+    if (popup) {
+        popup.classList.remove('hidden');
+    }
+
+    if (type === 'agenda-manager') {
+        // Focus title input if visible
+        const titleInput = $('input-title');
+        if (titleInput && !titleInput.offsetParent === null) {
+            titleInput.focus();
+        }
+
+        // Init Calendar
+        if (!selectedHistoryDate) {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            selectedHistoryDate = `${y}-${m}-${d}`;
+        }
+        renderCalendar(currentCalendarDate);
+        renderHistoryList(selectedHistoryDate);
     }
 }
 
 function hidePopup() {
     elements.popupOverlay.classList.add('hidden');
     document.querySelectorAll('.popup-card').forEach(p => p.classList.add('hidden'));
+}
+
+function switchTab(tabName) {
+    // Update nav items
+    document.querySelectorAll('.modal-nav-item').forEach(item => {
+        if (item.dataset.tab === tabName) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+
+    // Update sections
+    document.querySelectorAll('.tab-section').forEach(section => {
+        section.classList.add('hidden');
+        section.classList.remove('active');
+    });
+
+    const activeSection = $(`section-${tabName}-agenda`);
+    if (activeSection) {
+        activeSection.classList.remove('hidden');
+        activeSection.classList.add('active');
+    }
 }
 
 // ===== 导出功能 =====
@@ -514,8 +723,31 @@ function bindEvents() {
     $('btn-sidebar-close').addEventListener('click', toggleSidebar);
     $('btn-add-agenda').addEventListener('click', () => showPopup('add'));
 
-    // 添加议程弹窗
-    $('btn-cancel-add').addEventListener('click', hidePopup);
+    // 议程管理弹窗事件
+    const btnCloseManager = $('btn-close-manager');
+    if (btnCloseManager) btnCloseManager.addEventListener('click', hidePopup);
+
+    // Tab切换
+    document.querySelectorAll('.modal-nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+            switchTab(item.dataset.tab);
+        });
+    });
+
+    // 日历导航
+    const btnPrevMonth = $('btn-prev-month');
+    if (btnPrevMonth) btnPrevMonth.addEventListener('click', () => {
+        currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+        renderCalendar(currentCalendarDate);
+    });
+
+    const btnNextMonth = $('btn-next-month');
+    if (btnNextMonth) btnNextMonth.addEventListener('click', () => {
+        currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+        renderCalendar(currentCalendarDate);
+    });
+
+    // 添加议程
     $('btn-confirm-add').addEventListener('click', confirmAddAgenda);
     $('input-title').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') confirmAddAgenda();
@@ -524,7 +756,6 @@ function bindEvents() {
         if (e.key === 'Enter') confirmAddAgenda();
     });
 
-    // 外观设置
     // 外观设置
     // 倒计时设置
     $('input-timer-color').addEventListener('input', (e) => {
@@ -624,6 +855,9 @@ function confirmAddAgenda() {
     addAgenda(title, duration);
     $('input-title').value = '';
     $('input-duration').value = '5';
+    // 不建议立即关闭，可能用户想继续添加。但原逻辑是关闭的。
+    // 这里保持关闭，或者给个提示？
+    // V1保持关闭
     hidePopup();
 }
 
@@ -668,37 +902,50 @@ function initSortable() {
 // ===== 工具函数 =====
 function formatTime(seconds) {
     const absSeconds = Math.abs(seconds);
-    const m = Math.floor(absSeconds / 60);
-    const s = absSeconds % 60;
-    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    const m = Math.floor(absSeconds / 60).toString().padStart(2, '0');
+    const s = (absSeconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
 }
 
 function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    if (!text) return '';
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
-function playBeep(times = 1) {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playBeep(count = 1) {
+    // 简单的音频上下文蜂鸣
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
 
-    for (let i = 0; i < times; i++) {
-        setTimeout(() => {
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
+        const ctx = new AudioContext();
 
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
+        for (let i = 0; i < count; i++) {
+            setTimeout(() => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
 
-            oscillator.frequency.value = 800;
-            oscillator.type = 'sine';
-            gainNode.gain.value = 0.3;
+                osc.connect(gain);
+                gain.connect(ctx.destination);
 
-            oscillator.start(audioCtx.currentTime);
-            oscillator.stop(audioCtx.currentTime + 0.15);
-        }, i * 200);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, ctx.currentTime);
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.5);
+
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.5);
+            }, i * 600);
+        }
+    } catch (e) {
+        console.error('Audio play failed', e);
     }
 }
 
-// ===== 启动 =====
-document.addEventListener('DOMContentLoaded', init);
+// 启动
+window.addEventListener('DOMContentLoaded', init);

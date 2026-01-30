@@ -79,21 +79,65 @@
 
     <!-- 弹窗遮罩 -->
     <div id="popup-overlay" class="hidden">
-        <!-- 添加议程弹窗 -->
-        <div id="popup-add" class="popup-card hidden">
-            <h3>添加议程</h3>
-            <div class="form-group">
-                <label for="input-title">议题名称</label>
-                <input type="text" id="input-title" placeholder="例如：项目介绍">
+        <!-- 议程管理弹窗 (原添加议程弹窗重构) -->
+        <div id="popup-agenda-manager" class="popup-card popup-agenda-manager hidden">
+            <div class="modal-sidebar">
+                <div class="sidebar-title">议程管理</div>
+                <div class="modal-nav-item active" data-tab="new">
+                    <span>📝</span> 新增会议议程
+                </div>
+                <div class="modal-nav-item" data-tab="history">
+                    <span>📅</span> 历史议程表
+                </div>
             </div>
-            <div class="form-group">
-                <label for="input-duration">计划时长 (分钟)</label>
-                <input type="number" id="input-duration" placeholder="5" min="1" value="5">
+
+            <div class="modal-content">
+                <!-- 新增议程视图 -->
+                <div id="section-new-agenda" class="tab-section active">
+                    <h3>新增会议议程</h3>
+                    <div class="form-group">
+                        <label for="input-title">议题名称</label>
+                        <input type="text" id="input-title" placeholder="例如：项目介绍">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-duration">计划时长 (分钟)</label>
+                        <input type="number" id="input-duration" placeholder="5" min="1" value="5">
+                    </div>
+                    <div class="popup-actions center-actions">
+                        <button class="popup-btn confirm" id="btn-confirm-add" style="max-width: 200px;">开始议程</button>
+                    </div>
+                </div>
+
+                <!-- 历史议程视图 -->
+                <div id="section-history-agenda" class="tab-section hidden">
+                    <div class="history-layout">
+                        <!-- 左侧日历 -->
+                        <div class="calendar-section">
+                            <div class="calendar-header">
+                                <button class="header-btn" id="btn-prev-month">&lt;</button>
+                                <span id="calendar-current-month">2026年 1月</span>
+                                <button class="header-btn" id="btn-next-month">&gt;</button>
+                            </div>
+                            <div class="calendar-grid" id="calendar-grid">
+                                <!-- JS生成日历 -->
+                            </div>
+                        </div>
+
+                        <!-- 右侧列表 -->
+                        <div class="history-list-section">
+                            <div class="history-title-bar">
+                                <span class="history-date-label" id="history-selected-date">请选择日期</span>
+                            </div>
+                            <div id="history-list-container">
+                                <!-- JS生成列表 -->
+                                <div class="empty-hint">无记录</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="popup-actions">
-                <button class="popup-btn cancel" id="btn-cancel-add">取消</button>
-                <button class="popup-btn confirm" id="btn-confirm-add">确认</button>
-            </div>
+
+            <button class="close-popup-btn" id="btn-close-manager">×</button>
         </div>
 
         <!-- 外观设置弹窗 -->

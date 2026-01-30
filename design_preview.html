@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexTimer UI Preview - 历史议程</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Preview specific styles */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #preview-modal {
+            width: 800px;
+            height: 600px;
+            background: rgba(30, 30, 45, 0.95);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            display: flex;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-sidebar {
+            width: 200px;
+            background: rgba(20, 20, 30, 0.5);
+            border-right: 1px solid var(--border-color);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-nav-item {
+            padding: 15px 24px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+        }
+
+        .modal-nav-item:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .modal-nav-item.active {
+            color: var(--blue);
+            background: rgba(0, 120, 212, 0.1);
+            border-right: 3px solid var(--blue);
+        }
+
+        .modal-content {
+            flex: 1;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .history-layout {
+            display: flex;
+            gap: 24px;
+            height: 100%;
+        }
+
+        .calendar-section {
+            flex: 1;
+            /* border-right: 1px solid var(--border-color); */
+            /* padding-right: 24px; */
+        }
+
+        .history-list-section {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        /* Mock Calendar */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            text-align: center;
+        }
+
+        .week-day {
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .date-cell {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .date-cell:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .date-cell.selected {
+            background: var(--blue);
+            color: white;
+        }
+
+        .date-cell.has-data::after {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: var(--success);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 6px;
+        }
+
+        .date-cell.selected.has-data::after {
+            background: white;
+        }
+
+        .date-cell.other-month {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* History List */
+        .history-title-bar {
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-date-label {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .h-time {
+            color: var(--text-secondary);
+            font-size: 12px;
+            width: 80px;
+        }
+
+        .h-info {
+            flex: 1;
+        }
+
+        .h-title {
+            color: var(--text-primary);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .h-duration {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .h-status {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: rgba(68, 204, 68, 0.2);
+            color: #44cc44;
+        }
+
+        .close-preview {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            cursor: pointer;
+            z-index: 100;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app-container" style="filter: blur(5px); position: absolute; width: 100%; height: 100%;">
+        <!-- Background simulation -->
+    </div>
+
+    <!-- The New Agenda Manager Modal -->
+    <div id="preview-modal">
+        <div class="modal-sidebar">
+            <div style="padding: 20px; font-size: 18px; font-weight: bold; color: white;">议程管理</div>
+            <div class="modal-nav-item">
+                <span>📝</span> 新增会议议程
+            </div>
+            <div class="modal-nav-item active">
+                <span>📅</span> 历史议程表
+            </div>
+        </div>
+
+        <div class="modal-content">
+            <div class="history-layout">
+                <!-- Calendar -->
+                <div class="calendar-section">
+                    <div class="calendar-header">
+                        <button class="header-btn">&lt;</button>
+                        <span>2026年 1月</span>
+                        <button class="header-btn">&gt;</button>
+                    </div>
+                    <div class="calendar-grid">
+                        <div class="week-day">日</div>
+                        <div class="week-day">一</div>
+                        <div class="week-day">二</div>
+                        <div class="week-day">三</div>
+                        <div class="week-day">四</div>
+                        <div class="week-day">五</div>
+                        <div class="week-day">六</div>
+
+                        <!-- Empty cells -->
+                        <div class="date-cell other-month">28</div>
+                        <div class="date-cell other-month">29</div>
+                        <div class="date-cell other-month">30</div>
+                        <div class="date-cell other-month">31</div>
+                        <div class="date-cell">1</div>
+                        <div class="date-cell">2</div>
+                        <div class="date-cell">3</div>
+
+                        <div class="date-cell">4</div>
+                        <div class="date-cell has-data">5</div>
+                        <div class="date-cell">6</div>
+                        <div class="date-cell">7</div>
+                        <div class="date-cell">8</div>
+                        <div class="date-cell">9</div>
+                        <div class="date-cell">10</div>
+
+                        <div class="date-cell has-data">11</div>
+                        <div class="date-cell">12</div>
+                        <div class="date-cell">13</div>
+                        <div class="date-cell">14</div>
+                        <div class="date-cell">15</div>
+                        <div class="date-cell">16</div>
+                        <div class="date-cell has-data">17</div>
+
+                        <div class="date-cell">18</div>
+                        <div class="date-cell">19</div>
+                        <div class="date-cell">20</div>
+                        <div class="date-cell">21</div>
+                        <div class="date-cell">22</div>
+                        <div class="date-cell">23</div>
+                        <div class="date-cell">24</div>
+
+                        <div class="date-cell">25</div>
+                        <div class="date-cell">26</div>
+                        <div class="date-cell has-data">27</div>
+                        <div class="date-cell">28</div>
+                        <div class="date-cell selected has-data">29</div>
+                        <div class="date-cell">30</div>
+                        <div class="date-cell">31</div>
+                    </div>
+                </div>
+
+                <!-- List -->
+                <div class="history-list-section">
+                    <div class="history-title-bar">
+                        <span class="history-date-label">1月29日 (周四)</span>
+                        <span style="font-size: 12px; color: var(--text-secondary);">3个议程</span>
+                    </div>
+
+                    <div class="history-item">
+                        <div class="h-time">09:30</div>
+                        <div class="h-info">
+                            <div class="h-title">晨会 - 项目进度同步</div>
+                            <div class="h-duration">计划: 15分钟 | 实际: 18分钟</div>
+                        </div>
+                        <div class="h-status">已完成</div>
+                    </div>
+
+                    <div class="history-item">
+                        <div class="h-time">14:00</div>
+                        <div class="h-info">
+                            <div class="h-title">产品设计评审</div>
+                            <div class="h-duration">计划: 60分钟 | 实际: 55分钟</div>
+                        </div>
+                        <div class="h-status">已完成</div>
+                    </div>
+
+                    <div class="history-item">
+                        <div class="h-time">16:30</div>
+                        <div class="h-info">
+                            <div class="h-title">代码走查 - 模块A</div>
+                            <div class="h-duration">计划: 30分钟 | 实际: 30分钟</div>
+                        </div>
+                        <div class="h-status">已完成</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
