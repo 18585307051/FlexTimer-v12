@@ -95,18 +95,32 @@ function renderAgendaList() {
     agendas.forEach((agenda, index) => {
         const card = document.createElement('div');
         card.className = 'card';
-        if (index === currentIndex) {
+
+        // 状态类名
+        if (agenda.status === 'done') {
+            card.classList.add('done');
+        } else if (index === currentIndex) {
             card.classList.add(isRunning ? 'active' : 'selected');
         }
-        if (agenda.status === 'done') card.classList.add('done');
         card.dataset.index = index;
+
+        // 状态图标
+        let statusIcon = '';
+        if (agenda.status === 'done') {
+            statusIcon = '<span class="status-icon done">✓</span>';
+        } else if (index === currentIndex && isRunning) {
+            statusIcon = '<span class="status-icon active">◉</span>';
+        } else {
+            statusIcon = '<span class="status-icon pending">○</span>';
+        }
 
         card.innerHTML = `
             <span class="card-drag-handle">☰</span>
             <div class="card-content">
                 <div class="card-title">${escapeHtml(agenda.title)}</div>
-                <div class="card-duration">${formatTime(agenda.rem)} / ${agenda.plan}分钟</div>
+                <div class="card-duration">计划: ${agenda.plan}分钟</div>
             </div>
+            ${statusIcon}
             <button class="card-delete" data-index="${index}">×</button>
         `;
 
@@ -547,6 +561,14 @@ function initSortable() {
         handle: '.card-drag-handle',
         ghostClass: 'sortable-ghost',
         chosenClass: 'sortable-chosen',
+        filter: '.done', // 已完成的议程不可拖拽
+        onMove: (evt) => {
+            // 禁止将卡片移动到已完成议程的位置之前
+            const targetIndex = parseInt(evt.related.dataset.index, 10);
+            if (agendas[targetIndex] && agendas[targetIndex].status === 'done') {
+                return false;
+            }
+        },
         onEnd: (evt) => {
             const item = agendas.splice(evt.oldIndex, 1)[0];
             agendas.splice(evt.newIndex, 0, item);

@@ -323,37 +323,46 @@ body {
 .card {
     display: flex;
     align-items: center;
-    padding: 12px;
-    margin-bottom: 8px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
+    padding: 14px 12px;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid transparent;
+    border-radius: 12px;
     cursor: grab;
     transition: all 0.2s ease;
+    color: #333;
 }
 
 .card:hover {
-    background: rgba(60, 60, 80, 0.8);
+    border-color: var(--blue);
+    box-shadow: 0 4px 12px rgba(0, 120, 212, 0.2);
 }
 
 .card.active {
     border-color: var(--blue);
-    box-shadow: 0 0 12px rgba(0, 120, 212, 0.3);
-}
-
-.card.done {
-    opacity: 0.5;
+    box-shadow: 0 0 16px rgba(0, 120, 212, 0.4);
 }
 
 .card.selected {
     border-color: var(--success);
-    background: rgba(68, 204, 68, 0.1);
+    background: rgba(68, 204, 68, 0.15);
+}
+
+.card.done {
+    opacity: 0.7;
+    background: rgba(200, 200, 200, 0.6);
+    cursor: not-allowed;
+}
+
+.card.done .card-drag-handle {
+    display: none;
 }
 
 .card-drag-handle {
-    color: var(--text-secondary);
-    margin-right: 10px;
+    color: #999;
+    margin-right: 12px;
     cursor: grab;
+    font-size: 16px;
 }
 
 .card-content {
@@ -362,23 +371,49 @@ body {
 
 .card-title {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: 4px;
+    color: #222;
 }
 
 .card-duration {
     font-size: 12px;
-    color: var(--text-secondary);
+    color: #666;
+}
+
+/* ===== Status Icons ===== */
+.status-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+.status-icon.done {
+    color: #44cc44;
+}
+
+.status-icon.active {
+    color: var(--blue);
+    animation: pulse 1s ease-in-out infinite;
+}
+
+.status-icon.pending {
+    color: #999;
 }
 
 .card-delete {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     border: none;
     background: transparent;
-    color: var(--text-secondary);
+    color: #999;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 6px;
+    font-size: 18px;
     opacity: 0;
     transition: all 0.2s ease;
 }
@@ -390,6 +425,10 @@ body {
 .card-delete:hover {
     background: var(--danger);
     color: white;
+}
+
+.card.done .card-delete {
+    display: none;
 }
 
 /* ===== Add Button ===== */
