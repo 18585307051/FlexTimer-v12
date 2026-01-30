@@ -186,18 +186,54 @@ function applySettings() {
     // 更新设置面板的值
     $('input-font-color').value = settings.fontColor;
     $('input-font-size').value = settings.fontSize;
-    $('font-size-value').textContent = settings.fontSize;
     $('input-opacity').value = settings.opacity;
-    $('opacity-value').textContent = settings.opacity;
+    $('opacity-value').textContent = settings.opacity + '%';
     $('input-warning-seconds').value = settings.warningSeconds;
     $('input-sound-enabled').checked = settings.soundEnabled;
     $('input-always-on-top').checked = settings.alwaysOnTop;
+
+    // 更新预览
+    updateAppearancePreview();
 
     // Electron 透明度
     if (window.electronAPI) {
         window.electronAPI.setOpacity(settings.opacity / 100);
         window.electronAPI.setAlwaysOnTop(settings.alwaysOnTop);
     }
+}
+
+function updateAppearancePreview() {
+    // 颜色预览
+    const colorPreview = $('color-preview');
+    if (colorPreview) {
+        colorPreview.style.color = settings.fontColor;
+    }
+
+    // 大小预览
+    const sizePreview = $('size-preview-timer');
+    if (sizePreview) {
+        sizePreview.style.color = settings.fontColor;
+        // 根据设置动态缩放预览字体大小 (最大显示80px)
+        const previewSize = Math.min(settings.fontSize, 80);
+        sizePreview.style.fontSize = previewSize + 'px';
+    }
+
+    // 更新渐变条颜色
+    const gradient = $('color-gradient');
+    if (gradient) {
+        const baseColor = settings.fontColor;
+        gradient.style.background = `linear-gradient(90deg, ${baseColor} 0%, ${lightenColor(baseColor, 30)} 50%, ${lightenColor(baseColor, 60)} 100%)`;
+    }
+}
+
+function lightenColor(color, percent) {
+    // 简单的颜色变亮函数
+    const num = parseInt(color.replace('#', ''), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = Math.min(255, (num >> 16) + amt);
+    const G = Math.min(255, ((num >> 8) & 0x00FF) + amt);
+    const B = Math.min(255, (num & 0x0000FF) + amt);
+    return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
 }
 
 // ===== 计时器逻辑 =====
@@ -469,22 +505,22 @@ function bindEvents() {
     // 外观设置
     $('input-font-color').addEventListener('input', (e) => {
         settings.fontColor = e.target.value;
-        applySettings();
-        saveSettings();
+        updateAppearancePreview();
     });
     $('input-font-size').addEventListener('input', (e) => {
         settings.fontSize = parseInt(e.target.value, 10);
-        $('font-size-value').textContent = settings.fontSize;
-        applySettings();
-        saveSettings();
+        updateAppearancePreview();
     });
     $('input-opacity').addEventListener('input', (e) => {
         settings.opacity = parseInt(e.target.value, 10);
-        $('opacity-value').textContent = settings.opacity;
+        $('opacity-value').textContent = settings.opacity + '%';
+    });
+    $('btn-save-appearance').addEventListener('click', () => {
         applySettings();
         saveSettings();
+        hidePopup();
     });
-    $('btn-close-appearance').addEventListener('click', hidePopup);
+    $('btn-cancel-appearance').addEventListener('click', hidePopup);
 
     // 提醒设置
     $('input-warning-seconds').addEventListener('change', (e) => {

@@ -97,22 +97,48 @@
         </div>
 
         <!-- 外观设置弹窗 -->
-        <div id="popup-appearance" class="popup-card hidden">
+        <div id="popup-appearance" class="popup-card popup-appearance hidden">
             <h3>外观设置</h3>
-            <div class="form-group">
-                <label for="input-font-color">字体颜色</label>
-                <input type="color" id="input-font-color" value="#00ff00">
+
+            <!-- 字体颜色区块 -->
+            <div class="appearance-section">
+                <div class="section-label">字体颜色</div>
+                <div class="color-picker-row">
+                    <input type="color" id="input-font-color" class="color-input" value="#6B8AFF">
+                    <div class="color-gradient" id="color-gradient"></div>
+                    <div class="color-preview-timer" id="color-preview">05:30</div>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="input-font-size">字体大小: <span id="font-size-value">80</span>px</label>
-                <input type="range" id="input-font-size" min="40" max="400" value="80">
+
+            <!-- 字体大小区块 -->
+            <div class="appearance-section">
+                <div class="section-label">字体大小</div>
+                <div class="slider-container">
+                    <span class="slider-min">40px</span>
+                    <input type="range" id="input-font-size" class="styled-slider" min="40" max="400" value="80">
+                    <span class="slider-max">400px</span>
+                </div>
+                <div class="size-preview">
+                    <span id="size-preview-timer">05:30</span>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="input-opacity">窗口透明度: <span id="opacity-value">100</span>%</label>
-                <input type="range" id="input-opacity" min="20" max="100" value="100">
+
+            <!-- 窗口透明度区块 -->
+            <div class="appearance-section">
+                <div class="section-header">
+                    <span class="section-label">窗口透明度</span>
+                    <span class="section-value" id="opacity-value">100%</span>
+                </div>
+                <div class="slider-container">
+                    <span class="slider-min">20%</span>
+                    <input type="range" id="input-opacity" class="styled-slider" min="20" max="100" value="100">
+                    <span class="slider-max">100%</span>
+                </div>
             </div>
+
             <div class="popup-actions">
-                <button class="popup-btn confirm" id="btn-close-appearance">关闭</button>
+                <button class="popup-btn confirm" id="btn-save-appearance">保存</button>
+                <button class="popup-btn cancel" id="btn-cancel-appearance">取消</button>
             </div>
         </div>
 
