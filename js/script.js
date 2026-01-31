@@ -417,6 +417,7 @@ function applySettings() {
 
     // UI样式
     document.documentElement.style.setProperty('--ui-color', settings.uiColor);
+    document.documentElement.style.setProperty('--text-primary', settings.uiColor); // Apply globally
     document.documentElement.style.setProperty('--ui-size', settings.uiSize + 'px');
 
     // 更新设置面板的值
