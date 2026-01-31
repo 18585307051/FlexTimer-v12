@@ -96,7 +96,7 @@
         <!-- 1. 议程管理中心 (New) -->
         <div id="popup-agenda-manager" class="popup-card popup-agenda-manager hidden">
             <!-- ... content ... -->
-            <div class="modal-sidebar">
+            <div class="modal-sidebar" id="modal-sidebar">
                 <div class="sidebar-title">议程管理</div>
                 <div class="modal-nav-item active" data-tab="new">
                     <span>📝</span> 新增会议议程
@@ -106,7 +106,10 @@
                 </div>
             </div>
 
-            <div class="modal-content">
+            <!-- Resizer 1: Between sidebar and content -->
+            <div class="panel-resizer" id="resizer-sidebar"></div>
+
+            <div class="modal-content" id="modal-content">
                 <!-- Tab 1: 新增议程 -->
                 <div id="section-new-agenda" class="tab-section active">
                     <h3>新增会议议程</h3>
@@ -127,7 +130,7 @@
                 <div id="section-history-agenda" class="tab-section hidden">
                     <div class="history-layout">
                         <!-- Left: Calendar -->
-                        <div class="calendar-section">
+                        <div class="calendar-section" id="calendar-section">
                             <div class="calendar-header">
                                 <button class="header-btn" id="btn-prev-month">&lt;</button>
                                 <span id="calendar-current-month"></span>
@@ -138,8 +141,11 @@
                             </div>
                         </div>
 
+                        <!-- Resizer 2: Between calendar and history list -->
+                        <div class="panel-resizer vertical" id="resizer-calendar"></div>
+
                         <!-- Right: List -->
-                        <div class="history-list-section">
+                        <div class="history-list-section" id="history-list-section">
                             <div class="history-title-bar">
                                 <span class="history-date-label" id="history-selected-date">请选择日期</span>
                             </div>

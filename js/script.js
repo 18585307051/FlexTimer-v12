@@ -55,6 +55,72 @@ function init() {
     syncUI();
     applySettings();
     initSortable();
+    initResizers();
+}
+
+// ===== 可拖拽调整面板大小 =====
+function initResizers() {
+    // Resizer 1: Between modal-sidebar and modal-content
+    const resizerSidebar = document.getElementById('resizer-sidebar');
+    const modalSidebar = document.getElementById('modal-sidebar');
+    const modalContent = document.getElementById('modal-content');
+
+    if (resizerSidebar && modalSidebar && modalContent) {
+        setupResizer(resizerSidebar, modalSidebar, 'width', 120, 300);
+    }
+
+    // Resizer 2: Between calendar-section and history-list-section
+    const resizerCalendar = document.getElementById('resizer-calendar');
+    const calendarSection = document.getElementById('calendar-section');
+    const historyListSection = document.getElementById('history-list-section');
+
+    if (resizerCalendar && calendarSection && historyListSection) {
+        setupResizer(resizerCalendar, calendarSection, 'width', 180, 400);
+    }
+}
+
+function setupResizer(resizer, targetPanel, dimension, minSize, maxSize) {
+    let startPos = 0;
+    let startSize = 0;
+    let isResizing = false;
+
+    function onMouseDown(e) {
+        e.preventDefault();
+        isResizing = true;
+        resizer.classList.add('resizing');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+
+        startPos = e.clientX;
+        startSize = targetPanel.offsetWidth;
+
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
+    }
+
+    function onMouseMove(e) {
+        if (!isResizing) return;
+
+        const delta = e.clientX - startPos;
+        let newSize = startSize + delta;
+
+        // Clamp to min/max
+        newSize = Math.max(minSize, Math.min(maxSize, newSize));
+
+        targetPanel.style.width = newSize + 'px';
+    }
+
+    function onMouseUp() {
+        isResizing = false;
+        resizer.classList.remove('resizing');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+    }
+
+    resizer.addEventListener('mousedown', onMouseDown);
 }
 
 function generateMockData() {
