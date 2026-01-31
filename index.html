@@ -18,33 +18,34 @@
             </div>
             <div class="header-center drag-region"></div>
             <div class="header-right">
-                <button class="header-btn" id="btn-review" title="复盘">
-                    <span class="icon">📊</span>
-                    <span class="label">复盘</span>
-                </button>
-                <button class="header-btn" id="btn-reset" title="重置">
-                    <span class="icon">🔄</span>
-                    <span class="label">重置</span>
-                </button>
-                <button class="header-btn" id="btn-manage" title="议程管理">
-                    <span class="icon">📅</span>
-                    <span class="label">管理</span>
-                </button>
-                <button class="header-btn" id="btn-list" title="待办列表">
-                    <span class="icon">☰</span>
-                    <span class="label">当日议程</span>
-                </button>
-                <button class="header-btn" id="btn-appearance" title="外观设置">
-                    <span class="icon">🎨</span>
-                    <span class="label">外观</span>
-                </button>
-                <button class="header-btn" id="btn-alert" title="提醒设置">
-                    <span class="icon">🔔</span>
-                    <span class="label">提醒</span>
-                </button>
-                <button class="header-btn" id="btn-settings" title="通用设置">
+                <div id="header-toolbar" class="header-toolbar">
+                    <button class="header-btn" id="btn-review" title="复盘">
+                        <span class="icon">📊</span>
+                        <span class="label">复盘</span>
+                    </button>
+                    <button class="header-btn" id="btn-reset" title="重置">
+                        <span class="icon">🔄</span>
+                        <span class="label">重置</span>
+                    </button>
+                    <button class="header-btn" id="btn-manage" title="议程管理">
+                        <span class="icon">📅</span>
+                        <span class="label">管理</span>
+                    </button>
+                    <button class="header-btn" id="btn-list" title="待办列表">
+                        <span class="icon">☰</span>
+                        <span class="label">当日议程</span>
+                    </button>
+                    <button class="header-btn" id="btn-appearance" title="外观设置">
+                        <span class="icon">🎨</span>
+                        <span class="label">外观</span>
+                    </button>
+                    <button class="header-btn" id="btn-alert" title="提醒设置">
+                        <span class="icon">🔔</span>
+                        <span class="label">提醒</span>
+                    </button>
+                </div>
+                <button class="header-btn" id="btn-settings" title="显示/隐藏菜单">
                     <span class="icon">⚙️</span>
-                    <span class="label">设置</span>
                 </button>
             </div>
             <button class="window-btn close-btn" id="btn-close" title="关闭">×</button>
@@ -72,12 +73,20 @@
 
         <!-- 侧边栏 -->
         <aside id="sidebar" class="collapsed">
+            <!-- ... sidebar content ... -->
             <div id="sidebar-header">
                 <span>议程列表</span>
                 <button class="sidebar-close-btn" id="btn-sidebar-close">×</button>
             </div>
             <div id="list-zone"></div>
-            <button class="add-btn" id="btn-add-agenda">+ 添加议程</button>
+            <div class="sidebar-footer">
+                <button class="action-btn add-btn" id="btn-add-agenda">
+                    <span class="icon">+</span> 添加议程
+                </button>
+                <button class="action-btn archive-btn" id="btn-archive-agenda" title="归档当日议程">
+                    <span class="icon">📂</span> 归档
+                </button>
+            </div>
         </aside>
     </div>
 
@@ -86,6 +95,7 @@
 
         <!-- 1. 议程管理中心 (New) -->
         <div id="popup-agenda-manager" class="popup-card popup-agenda-manager hidden">
+            <!-- ... content ... -->
             <div class="modal-sidebar">
                 <div class="sidebar-title">议程管理</div>
                 <div class="modal-nav-item active" data-tab="new">
@@ -255,18 +265,6 @@
             <div class="popup-actions">
                 <button class="popup-btn cancel" id="btn-cancel-alert">取消</button>
                 <button class="popup-btn confirm" id="btn-save-alert">保存</button>
-            </div>
-        </div>
-
-        <!-- 4. 通用设置弹窗 -->
-        <div id="popup-settings" class="popup-card hidden">
-            <h3>设置</h3>
-            <div class="form-group checkbox-group">
-                <input type="checkbox" id="input-always-on-top">
-                <label for="input-always-on-top">窗口置顶</label>
-            </div>
-            <div class="popup-actions">
-                <button class="popup-btn confirm" id="btn-close-settings">关闭</button>
             </div>
         </div>
     </div>

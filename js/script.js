@@ -652,6 +652,39 @@ function resetAll() {
 }
 
 // ===== 议程管理 =====
+function archiveDailyAgenda() {
+    if (agendas.length === 0) {
+        alert('没有可归档的议程');
+        return;
+    }
+
+    // 检查是否有未完成的议程
+    const unfinishedIndex = agendas.findIndex(a => a.status !== 'done');
+    if (unfinishedIndex !== -1) {
+        alert('当日还有未完成的议程，无法归档');
+        return;
+    }
+
+    if (!confirm('确定要归档当日所有议程吗？\n(这将会清空当前列表，所有已完成的议程已自动保存至历史记录)')) {
+        return;
+    }
+
+    // 执行归档 (清空当前列表)
+    clearInterval(timerInterval);
+    timerInterval = null;
+    isRunning = false;
+    isPaused = false;
+    currentIndex = 0;
+    agendas = [];
+
+    saveData();
+    syncUI();
+
+    // 可选: 显示成功提示或简单的动画反馈
+    // alert('归档成功');
+}
+
+// ===== 议程管理 =====
 function addAgenda(title, plan) {
     agendas.push({
         title: title,
@@ -796,6 +829,8 @@ function bindEvents() {
         overtimeEnabled = !overtimeEnabled;
         syncUI();
     });
+
+    if ($('btn-archive-agenda')) $('btn-archive-agenda').addEventListener('click', archiveDailyAgenda);
 
     // 侧边栏
     if ($('btn-sidebar-close')) $('btn-sidebar-close').addEventListener('click', toggleSidebar);
