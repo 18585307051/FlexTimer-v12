@@ -15,7 +15,7 @@ let settings = {
     uiColor: '#ffffff',
     uiSize: 14,
     opacity: 100,
-    warningSeconds: 120,
+    warningSeconds: 10,
     soundEnabled: true,
     alwaysOnTop: false
 };
@@ -970,7 +970,7 @@ function bindEvents() {
 
     // 提醒设置
     if ($('input-warning-seconds')) $('input-warning-seconds').addEventListener('change', (e) => {
-        settings.warningSeconds = parseInt(e.target.value, 10) || 120;
+        settings.warningSeconds = parseInt(e.target.value, 10) || 10;
         saveSettings();
     });
     if ($('input-sound-enabled')) $('input-sound-enabled').addEventListener('change', (e) => {
@@ -979,7 +979,7 @@ function bindEvents() {
     });
     if ($('btn-cancel-alert')) $('btn-cancel-alert').addEventListener('click', hidePopup);
     if ($('btn-save-alert')) $('btn-save-alert').addEventListener('click', () => {
-        settings.warningSeconds = parseInt($('input-warning-seconds').value, 10) || 120;
+        settings.warningSeconds = parseInt($('input-warning-seconds').value, 10) || 10;
         settings.soundEnabled = $('input-sound-enabled').checked;
         saveSettings();
         hidePopup();
