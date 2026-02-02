@@ -56,6 +56,8 @@ function init() {
     applySettings();
     initSortable();
     initResizers();
+    updateAppScale();
+    window.addEventListener('resize', updateAppScale);
 }
 
 // ===== 可拖拽调整面板大小 =====
@@ -631,7 +633,7 @@ function showCountdownAnimation(callback) {
     const overlay = document.createElement('div');
     overlay.id = 'countdown-overlay';
     overlay.style.cssText = `
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
         right: 0;
@@ -653,7 +655,12 @@ function showCountdownAnimation(callback) {
     `;
 
     overlay.appendChild(countdownText);
-    document.body.appendChild(overlay);
+    const scaler = $('app-scaler');
+    if (scaler) {
+        scaler.appendChild(overlay);
+    } else {
+        document.body.appendChild(overlay);
+    }
 
     let count = 3;
     countdownText.textContent = count;
@@ -1129,6 +1136,20 @@ function playBeep(count = 1) {
         }
     } catch (e) {
         console.error('Audio play failed', e);
+    }
+}
+
+function updateAppScale() {
+    const baseWidth = 800;
+    const baseHeight = 500;
+    const currentWidth = window.innerWidth;
+    const currentHeight = window.innerHeight;
+
+    const scale = Math.min(currentWidth / baseWidth, currentHeight / baseHeight);
+
+    const scaler = $('app-scaler');
+    if (scaler) {
+        scaler.style.transform = `scale(${scale})`;
     }
 }
 
