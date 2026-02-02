@@ -35,20 +35,21 @@ body {
     background: radial-gradient(circle at 30% 30%, #2b3245 0%, #0f1219 70%, #000000 100%);
     color: var(--text-primary);
     user-select: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: relative;
 }
 
 #app-scaler {
     width: 800px;
     height: 500px;
-    position: relative;
-    transform-origin: center center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform-origin: 0 0;
     flex-shrink: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    will-change: transform, left, top;
+    /* 解决部分缩放可能产生的锯齿 */
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 /* ===== App Container ===== */

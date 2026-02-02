@@ -47,17 +47,28 @@ let selectedHistoryDate = null;
 
 // ===== 初始化 =====
 function init() {
-    loadData();
-    loadSettings();
-    loadHistory();
-    generateMockData(); // Generates test data for Jan 28/29
-    bindEvents();
-    syncUI();
-    applySettings();
-    initSortable();
-    initResizers();
+    // 1. 优先执行缩放逻辑，确保窗口适配
     updateAppScale();
     window.addEventListener('resize', updateAppScale);
+
+    // 2. 其它初始化逻辑，添加错误捕获以防脚本加载失败导致中断
+    try {
+        loadData();
+        loadSettings();
+        loadHistory();
+        generateMockData(); // Generates test data for Jan 28/29
+        bindEvents();
+        syncUI();
+        applySettings();
+        if (typeof Sortable !== 'undefined') {
+            initSortable();
+        } else {
+            console.warn('SortableJS not loaded, drag features disabled');
+        }
+        initResizers();
+    } catch (e) {
+        console.error('Initialization error:', e);
+    }
 }
 
 // ===== 可拖拽调整面板大小 =====
@@ -1140,17 +1151,27 @@ function playBeep(count = 1) {
 }
 
 function updateAppScale() {
+    const scaler = $('app-scaler');
+    if (!scaler) return;
+
     const baseWidth = 800;
     const baseHeight = 500;
-    const currentWidth = window.innerWidth;
-    const currentHeight = window.innerHeight;
+    const winW = window.innerWidth;
+    const winH = window.innerHeight;
 
-    const scale = Math.min(currentWidth / baseWidth, currentHeight / baseHeight);
+    // 计算缩放比例
+    const scale = Math.min(winW / baseWidth, winH / baseHeight);
 
-    const scaler = $('app-scaler');
-    if (scaler) {
-        scaler.style.transform = `scale(${scale})`;
-    }
+    // 计算居中偏移量 (因为 transform-origin 是 0 0)
+    const scaledWidth = baseWidth * scale;
+    const scaledHeight = baseHeight * scale;
+    const offsetX = (winW - scaledWidth) / 2;
+    const offsetY = (winH - scaledHeight) / 2;
+
+    // 应用变换
+    scaler.style.transform = `scale(${scale})`;
+    scaler.style.left = `${offsetX}px`;
+    scaler.style.top = `${offsetY}px`;
 }
 
 // 启动
