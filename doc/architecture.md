@@ -1,78 +1,71 @@
 # 架构设计文档 (Architecture Design)
 
-**项目名称**: FlexTimer v11
-**架构类型**: 单页面应用程序 (SPA)
-**技术栈**: HTML5, Vanilla CSS3, Vanilla JavaScript (ES6+)
+**项目名称**: FlexTimer v12
+**架构类型**: 基于 Electron 的单页面应用程序 (SPA)
+**核心理念**: 极致简约、数据驱动、响应式交互
+
+---
 
 ## 1. 总体架构 (System Architecture)
-FlexTimer v11 采用模块化前端设计，不依赖复杂的构建工具（如 Webpack/React），直接由浏览器解析运行。其核心思想是 **DOM 操作即UI**，**LocalStorage 即数据库**。
 
-### 1.1 文件结构 (Project Structure)
+FlexTimer v12 采用经典的 **Electron + Web前端** 架构。前端利用 Vanilla JavaScript 实现高性能运行，后端（主进程）负责原生系统集成。
+
+### 1.1 系统流转图
+
+```mermaid
+graph TD
+    A[Electron Main Process] -- IPC --> B[Preload Script]
+    B -- Context Bridge --> C[Renderer Process]
+    C -- 用户交互 --> D[Internal Logic script.js]
+    D -- 数据持久化 --> E[(LocalStorage)]
+    D -- 界面驱动 --> F[DOM/CSS]
+    D -- 跨进程请求 --> B
 ```
-FlexTimer-Project/
-├── index.html       # 视图入口 (View)
+
+### 1.2 目录结构
+
+```text
+FlexTimer-v12/
+├── main.js              # 主进程：窗口管理、原生 API 调用
+├── preload.js           # 预加载：Bridge 接口定义
+├── index.html           # 视图层 (HTML5)
 ├── css/
-│   └── style.css    # 视觉表现 (Presentation)
+│   └── style.css        # 视觉表现 (CSS3 + 玻璃拟态)
 ├── js/
-│   └── script.js    # 业务逻辑 (Controller & Model)
-├── docs/            # 文档
-└── README.md        # 项目简介
+│   └── script.js        # 核心逻辑 (ES6+ Vanilla JS)
+└── doc/                 # 离线文档集
 ```
 
-## 2. 核心模块 (Modules)
+## 2. 核心模块分解
 
-### 2.1 数据模型 (Model)
-应用的核心数据是 `agendas` 数组，存储在全局变量和 `localStorage` 中。每个议程项对象结构如下：
-```javascript
-{
-    title: "议题名称",   // String
-    rem: 120,           // Number (剩余秒数)
-    plan: 2,            // Number (计划分钟数，静态)
-    status: "ready",    // String ("ready" | "done")
-    used: 0,            // Number (实际已用秒数)
-    overtime: 0         // Number (超时秒数)
-}
-```
+### 2.1 状态管理与持久化 (Model)
+应用状态完全通过数据驱动。核心数据对象存储在 `localStorage` 中：
+- `agendas`: 当前会议项列表。
+- `historyData`: 按日期归档的历史数据。
+- `settings`: 个性化配置（字体、颜色、透明度）。
 
-### 2.2 视图层 (View)
-- **HTML**: 使用语义化标签构建布局。主要包括 `sidebar` (侧边栏)、`timer-zone` (计时区)、`popup-overlay` (弹窗层)。
-- **CSS**: 
-    - 采用 CSS Variables (`:root`) 定义全局主题色（如 `--blue`）。
-    - 使用 Flexbox 进行主要布局。
-    - 利用 `backdrop-filter` 实现磨砂玻璃效果。
-    - 响应式设计适配深色模式 (`@media (prefers-color-scheme: dark)`).
+### 2.2 计时核心引擎 (Timer Engine)
+计时模块通过循环触发：
+- **精确度控制**：利用递归 `setTimeout` 或 `setInterval` 配合系统时钟校验，确保计时准确。
+- **状态机**：
+  - `READY`: 准备阶段（显示 3-2-1）。
+  - `RUNNING`: 正常扣减时间。
+  - `OVERTIME`: 倒计时归零后自动进入正计时（负数显示）。
 
-### 2.3 控制器 (Controller)
-`script.js` 负责所有的交互逻辑：
-- **`syncUI()`**: 核心渲染函数。每次数据变更（添加、删除、排序、计时更新）后调用，重新生成 `list-zone` 的 DOM。
-- **`tick()`**: 计时器的主循环，每秒执行一次，处理倒计时扣减、超时累加、状态判断。
-- **`handleTimer()`**: 状态机控制，处理 开始 <-> 暂停 <-> 继续 的逻辑切换。
+### 2.3 UI 渲染系统 (View)
+- **玻璃拟态实现**：通过 `backdrop-filter: blur()` 与 `rgba` 渐变叠加实现。
+- **同步机制 `syncUI()`**：每次数据变更后，此函数负责重新生成 DOM 节点。这种响应式设计虽然不使用 React，但保证了逻辑与视图的高度同步。
 
-## 3. 关键技术点 (Key Technologies)
+## 3. 关键集成技术
 
-### 3.1 状态持久化
-利用 `localStorage` 存储两个关键数据：
-1.  **用户偏好**: 字体颜色、字体大小、警告阈值 (`flex_timer_font_size` 等)。
-2.  **业务数据**: 完整的议程列表 (`flex_v103_data`)。
-这保证了页面刷新或意外关闭后，用户的工作流不会丢失。
+### 3.1 跨进程通信 (IPC)
+通过 `preload.js` 暴露安全的 API 接口：
+- `electron.setOpacity(val)`: 动态调节窗口不透明度。
+- `electron.closeWindow()`: 处理定制化的关闭逻辑。
 
-### 3.2 拖拽排序
-集成第三方库 `Sortable.js`，通过简单的配置即可实现列表项的拖拽排序。
-```javascript
-new Sortable(el, {
-    onEnd: (evt) => {
-        // 更新数据模型并重新渲染
-        agendas.splice(...)
-        syncUI();
-    }
-});
-```
+### 3.2 第三方集成
+- **Sortable.js**: 仅用于拖拽排序逻辑，保持项目的轻量化。
 
-### 3.3 桌面端适配 (Electron Ready)
-虽然本项目是纯 Web 项目，但预留了 Electron 的集成接口：
-- CSS 中的 `-webkit-app-region: drag` 用于定义可拖拽区域。
-- JS 中注释掉的 `ipcRenderer` 代码块用于与主进程通信（如控制窗口透明度、穿透等）。
-
-## 4. 扩展性 (Scalability)
-- **样式扩展**: 只需修改 `style.css` 中的 CSS 变量即可更换主题。
-- **功能扩展**: 业务逻辑集中在 `script.js`，新增功能（如网络同步）只需在 `Model` 层增加接口。
+## 4. 安全与性能
+- **Context Isolation**: 启用 Electron 的上下文隔离，防止渲染进程直接访问 Node.js 高危接口。
+- **资源占用**: 由于采用原生 JS 且无重型框架，冷启动速度极快，内存占用维持在 100MB 以内。
