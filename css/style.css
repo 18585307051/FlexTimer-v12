@@ -41,19 +41,19 @@ body {
 }
 
 #app-root {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100vw;
     height: 100vh;
-    /* Main Glass Effect - Now on root to cover whole window regardless of scale */
+    /* Main Glass Effect - Sole owner of the boundary */
     background: rgba(15, 20, 30, calc(0.4 * var(--bg-opacity)));
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
-    /* Single window border always at the edges */
     border: 1px solid var(--glass-border);
     overflow: hidden;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: block;
+    /* Remove flex to avoid conflict with JS centering */
 }
 
 #app-scaler {
@@ -74,11 +74,21 @@ body {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    /* Stripped background/border to avoid double layers */
-    background: transparent;
-    border: none;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
     border-radius: 0;
     overflow: hidden;
+}
+
+/* FORCE STRIP ALL INTERMEDIATE LAYERS */
+#app-scaler,
+#main-content,
+#timer-zone {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
 }
 
 /* ===== Header ===== */
