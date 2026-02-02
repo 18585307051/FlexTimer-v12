@@ -183,7 +183,16 @@
                         <div class="slider-container">
                             <span class="slider-min">40px</span>
                             <input type="range" id="input-timer-size" class="styled-slider" min="40" max="400"
-                                value="80">
+                                value="80" list="timer-size-marks">
+                            <datalist id="timer-size-marks">
+                                <option value="40"></option>
+                                <option value="80"></option>
+                                <option value="120"></option>
+                                <option value="160"></option>
+                                <option value="200"></option>
+                                <option value="300"></option>
+                                <option value="400"></option>
+                            </datalist>
                             <span class="slider-max">400px</span>
                         </div>
                         <div class="size-preview">
@@ -214,7 +223,16 @@
                         </div>
                         <div class="slider-container">
                             <span class="slider-min">12px</span>
-                            <input type="range" id="input-ui-size" class="styled-slider" min="12" max="24" value="14">
+                            <input type="range" id="input-ui-size" class="styled-slider" min="12" max="24" value="14"
+                                list="ui-size-marks">
+                            <datalist id="ui-size-marks">
+                                <option value="12"></option>
+                                <option value="14"></option>
+                                <option value="16"></option>
+                                <option value="18"></option>
+                                <option value="20"></option>
+                                <option value="24"></option>
+                            </datalist>
                             <span class="slider-max">24px</span>
                         </div>
                     </div>
@@ -228,7 +246,15 @@
                     </div>
                     <div class="slider-container">
                         <span class="slider-min">20%</span>
-                        <input type="range" id="input-opacity" class="styled-slider" min="20" max="100" value="100">
+                        <input type="range" id="input-opacity" class="styled-slider" min="20" max="100" value="100"
+                            list="opacity-marks">
+                        <datalist id="opacity-marks">
+                            <option value="20"></option>
+                            <option value="40"></option>
+                            <option value="60"></option>
+                            <option value="80"></option>
+                            <option value="100"></option>
+                        </datalist>
                         <span class="slider-max">100%</span>
                     </div>
                 </div>

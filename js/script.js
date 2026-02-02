@@ -514,11 +514,24 @@ function applySettings() {
     // 更新预览
     updateAppearancePreview();
 
+    // 更新滑动条音轨高亮
+    updateSliderTrackHighlight($('input-timer-size'));
+    updateSliderTrackHighlight($('input-ui-size'));
+    updateSliderTrackHighlight($('input-opacity'));
+
     // Electron 透明度
     if (window.electronAPI) {
         window.electronAPI.setOpacity(settings.opacity / 100);
         window.electronAPI.setAlwaysOnTop(settings.alwaysOnTop);
     }
+}
+
+function updateSliderTrackHighlight(el) {
+    if (!el) return;
+    const min = el.min || 0;
+    const max = el.max || 100;
+    const val = ((el.value - min) / (max - min)) * 100;
+    el.style.background = `linear-gradient(to right, var(--primary-blue) ${val}%, rgba(255, 255, 255, 0.1) ${val}%)`;
 }
 
 function updateAppearancePreview() {
@@ -960,9 +973,21 @@ function bindEvents() {
         settings.timerColor = e.target.value;
         updateAppearancePreview();
     });
+    // 字体颜色渐变条随动 (示例，可根据需要细化)
     if ($('input-timer-size')) $('input-timer-size').addEventListener('input', (e) => {
-        settings.timerSize = parseInt(e.target.value, 10);
-        updateAppearancePreview();
+        let val = parseInt(e.target.value, 10);
+        // Snapping logic
+        const marks = [40, 80, 120, 160, 200, 300, 400];
+        const snapThreshold = 10;
+        for (const mark of marks) {
+            if (Math.abs(val - mark) < snapThreshold) {
+                val = mark;
+                e.target.value = val;
+                break;
+            }
+        }
+        settings.timerSize = val;
+        applySettings();
     });
 
     // UI设置
@@ -971,12 +996,35 @@ function bindEvents() {
         updateAppearancePreview();
     });
     if ($('input-ui-size')) $('input-ui-size').addEventListener('input', (e) => {
-        settings.uiSize = parseInt(e.target.value, 10);
-        updateAppearancePreview();
+        let val = parseInt(e.target.value, 10);
+        // Snapping logic
+        const marks = [12, 14, 16, 18, 20, 24];
+        const snapThreshold = 1;
+        for (const mark of marks) {
+            if (Math.abs(val - mark) < snapThreshold) {
+                val = mark;
+                e.target.value = val;
+                break;
+            }
+        }
+        settings.uiSize = val;
+        applySettings();
     });
 
     if ($('input-opacity')) $('input-opacity').addEventListener('input', (e) => {
-        settings.opacity = parseInt(e.target.value, 10);
+        let val = parseInt(e.target.value, 10);
+        // Snapping logic
+        const marks = [20, 40, 60, 80, 100];
+        const snapThreshold = 3;
+        for (const mark of marks) {
+            if (Math.abs(val - mark) < snapThreshold) {
+                val = mark;
+                e.target.value = val;
+                break;
+            }
+        }
+        settings.opacity = val;
+        applySettings();
         if ($('opacity-value')) $('opacity-value').textContent = settings.opacity + '%';
     });
     if ($('btn-save-appearance')) $('btn-save-appearance').addEventListener('click', () => {
