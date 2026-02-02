@@ -33,11 +33,8 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', 'Roboto', 'Microsoft YaHei', sans-serif;
-    /* Use background-color with rgba for transparency support */
-    background: radial-gradient(circle at 30% 30%,
-            rgba(43, 50, 69, var(--bg-opacity)) 0%,
-            rgba(15, 18, 25, var(--bg-opacity)) 70%,
-            rgba(0, 0, 0, var(--bg-opacity)) 100%);
+    /* Removed radial-gradient to ensure true transparency and fixed double border when scaling */
+    background: transparent;
     color: var(--text-primary);
     user-select: none;
     position: relative;
@@ -71,7 +68,8 @@ body {
     border-radius: 0;
     /* Pro apps often full bleed or subtle radius, sticking to 0 for window feel or small radius */
     overflow: hidden;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    /* Removed shadow to prevent "floating layer" look when window is scaled */
+    box-shadow: none;
 }
 
 /* ===== Header ===== */
