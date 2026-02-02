@@ -493,6 +493,17 @@ function applySettings() {
     // 倒计时样式
     document.documentElement.style.setProperty('--timer-color', settings.timerColor);
     document.documentElement.style.setProperty('--timer-size', settings.timerSize + 'px');
+    document.documentElement.style.setProperty('--ui-size', settings.uiSize + 'px');
+
+    if (elements.timerDisplay) {
+        elements.timerDisplay.style.color = settings.timerColor;
+        elements.timerDisplay.style.fontSize = settings.timerSize + 'px';
+    }
+
+    if (elements.currentTitle) {
+        elements.currentTitle.style.color = settings.timerColor;
+        elements.currentTitle.style.fontSize = Math.max(16, settings.timerSize * 0.45) + 'px';
+    }
 
     // UI样式
     document.documentElement.style.setProperty('--ui-color', settings.uiColor);
@@ -550,6 +561,15 @@ function updateAppearancePreview() {
         timerSizePreview.style.color = settings.timerColor;
         const previewSize = Math.min(settings.timerSize, 80);
         timerSizePreview.style.fontSize = previewSize + 'px';
+    }
+
+    // 同步议程标题预览 (如果存在预览元素，或者直接在 preview 区域模拟)
+    const currentTitlePreview = $('current-agenda-title');
+    if (currentTitlePreview) {
+        currentTitlePreview.style.color = settings.timerColor;
+        // 预览时也保持比例，但受限于容器
+        const titlePreviewSize = Math.max(12, Math.min(settings.timerSize * 0.45, 30));
+        currentTitlePreview.style.fontSize = titlePreviewSize + 'px';
     }
 
     // 倒计时渐变条
