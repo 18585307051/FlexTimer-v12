@@ -519,9 +519,12 @@ function applySettings() {
     updateSliderTrackHighlight($('input-ui-size'));
     updateSliderTrackHighlight($('input-opacity'));
 
-    // Electron 透明度
+    // Electron 透明度 (不再使用系统级透明度以保持内容清晰)
     if (window.electronAPI) {
-        window.electronAPI.setOpacity(settings.opacity / 100);
+        // 更新 CSS 变量控制背景透明度
+        document.documentElement.style.setProperty('--bg-opacity', settings.opacity / 100);
+        // 系统透明度保持 1.0，确保文字和按钮清晰
+        window.electronAPI.setOpacity(1.0);
         window.electronAPI.setAlwaysOnTop(settings.alwaysOnTop);
     }
 }

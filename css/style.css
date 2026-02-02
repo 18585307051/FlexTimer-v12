@@ -4,7 +4,7 @@
     --accent-cyan: #00d2ff;
     --bg-gradient-start: #1a1e29;
     --bg-gradient-end: #0f1219;
-    --glass-panel: rgba(20, 30, 50, 0.65);
+    --glass-panel: rgba(20, 30, 50, calc(0.65 * var(--bg-opacity)));
     --glass-border: rgba(255, 255, 255, 0.1);
     --text-primary: #ffffff;
     --text-secondary: rgba(255, 255, 255, 0.7);
@@ -15,6 +15,7 @@
     /* Slightly wider for the pro look */
     --timer-color: #ffffff;
     --ui-size: 14px;
+    --bg-opacity: 1;
 }
 
 /* ===== Reset & Base ===== */
@@ -32,7 +33,11 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', 'Roboto', 'Microsoft YaHei', sans-serif;
-    background: radial-gradient(circle at 30% 30%, #2b3245 0%, #0f1219 70%, #000000 100%);
+    /* Use background-color with rgba for transparency support */
+    background: radial-gradient(circle at 30% 30%,
+            rgba(43, 50, 69, var(--bg-opacity)) 0%,
+            rgba(15, 18, 25, var(--bg-opacity)) 70%,
+            rgba(0, 0, 0, var(--bg-opacity)) 100%);
     color: var(--text-primary);
     user-select: none;
     position: relative;
@@ -58,8 +63,8 @@ body {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    /* Main Glass Effect */
-    background: rgba(15, 20, 30, 0.4);
+    /* Main Glass Effect - Alpha scales with user setting */
+    background: rgba(15, 20, 30, calc(0.4 * var(--bg-opacity)));
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
     border: 1px solid var(--glass-border);

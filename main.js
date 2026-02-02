@@ -16,8 +16,7 @@ function createWindow() {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
             nodeIntegration: false
-        },
-        icon: path.join(__dirname, 'assets', 'icon.ico')
+        }
     });
 
     mainWindow.loadFile('index.html');

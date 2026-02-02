@@ -16,21 +16,15 @@
     },
     "build": {
         "appId": "com.flextimer.v12",
-        "productName": "FlexTimer v12",
+        "productName": "FlexTimerV12",
         "directories": {
             "output": "dist"
         },
         "win": {
             "target": [
-                "nsis",
-                "portable"
+                "zip",
+                "nsis"
             ]
-        },
-        "nsis": {
-            "oneClick": false,
-            "allowToChangeInstallationDirectory": true,
-            "createDesktopShortcut": true,
-            "createStartMenuShortcut": true
         }
     }
 }
