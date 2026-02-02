@@ -298,42 +298,30 @@ body {
 
 .control-btn {
     padding: 12px 30px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: none;
     border-radius: 30px;
     /* Pill shape */
-    background: rgba(255, 255, 255, 0.05);
-    /* Very subtle fill */
+    background: linear-gradient(135deg, var(--primary-blue), #1e58a8);
     color: var(--text-primary);
     cursor: pointer;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: center;
     min-width: 100px;
-}
-
-.control-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-.control-btn.primary {
-    background: linear-gradient(135deg, var(--primary-blue), #1e58a8);
-    border: none;
-    font-weight: 600;
     box-shadow: 0 0 20px rgba(45, 140, 240, 0.4);
 }
 
-.control-btn.primary:hover {
+.control-btn:hover {
     background: linear-gradient(135deg, #4dabf7, #2d8cf0);
     box-shadow: 0 0 30px rgba(45, 140, 240, 0.6);
     transform: translateY(-2px) scale(1.05);
 }
+
+/* .control-btn.primary is now merged into base .control-btn */
 
 .control-btn.toggle {
     display: flex;
