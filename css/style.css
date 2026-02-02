@@ -40,16 +40,30 @@ body {
     position: relative;
 }
 
+#app-root {
+    width: 100vw;
+    height: 100vh;
+    /* Main Glass Effect - Now on root to cover whole window regardless of scale */
+    background: rgba(15, 20, 30, calc(0.4 * var(--bg-opacity)));
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    /* Single window border always at the edges */
+    border: 1px solid var(--glass-border);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #app-scaler {
     width: 800px;
     height: 500px;
     position: absolute;
-    left: 0;
-    top: 0;
+    /* Centering is handled by updateAppScale script logic */
     transform-origin: 0 0;
     flex-shrink: 0;
     will-change: transform, left, top;
-    /* 解决部分缩放可能产生的锯齿 */
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 }
@@ -60,16 +74,11 @@ body {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    /* Main Glass Effect - Alpha scales with user setting */
-    background: rgba(15, 20, 30, calc(0.4 * var(--bg-opacity)));
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border: 1px solid var(--glass-border);
+    /* Stripped background/border to avoid double layers */
+    background: transparent;
+    border: none;
     border-radius: 0;
-    /* Pro apps often full bleed or subtle radius, sticking to 0 for window feel or small radius */
     overflow: hidden;
-    /* Removed shadow to prevent "floating layer" look when window is scaled */
-    box-shadow: none;
 }
 
 /* ===== Header ===== */

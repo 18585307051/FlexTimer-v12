@@ -10,293 +10,295 @@
 </head>
 
 <body>
-    <div id="app-scaler">
-        <div id="app-container">
-            <!-- 顶部标题栏 -->
-            <header id="header">
-                <div class="header-left">
-                    <span class="app-title">FlexTimer v12</span>
-                </div>
-                <div class="header-center drag-region"></div>
-                <div class="header-right">
-                    <div id="header-toolbar" class="header-toolbar">
-                        <button class="header-btn" id="btn-review" title="复盘">
-                            <span class="icon">📊</span>
-                            <span class="label">复盘</span>
-                        </button>
-                        <button class="header-btn" id="btn-reset" title="重置">
-                            <span class="icon">🔄</span>
-                            <span class="label">重置</span>
-                        </button>
-                        <button class="header-btn" id="btn-manage" title="议程管理">
-                            <span class="icon">📅</span>
-                            <span class="label">管理</span>
-                        </button>
-                        <button class="header-btn" id="btn-list" title="待办列表">
-                            <span class="icon">☰</span>
-                            <span class="label">当日议程</span>
-                        </button>
-                        <button class="header-btn" id="btn-appearance" title="外观设置">
-                            <span class="icon">🎨</span>
-                            <span class="label">外观</span>
-                        </button>
-                        <button class="header-btn" id="btn-alert" title="提醒设置">
-                            <span class="icon">🔔</span>
-                            <span class="label">提醒</span>
-                        </button>
+    <div id="app-root">
+        <div id="app-scaler">
+            <div id="app-container">
+                <!-- 顶部标题栏 -->
+                <header id="header">
+                    <div class="header-left">
+                        <span class="app-title">FlexTimer v12</span>
                     </div>
-                </div>
-                <button class="window-btn close-btn" id="btn-close" title="关闭">×</button>
-            </header>
-
-            <!-- 主内容区 -->
-            <main id="main-content">
-                <!-- 计时区域 -->
-                <section id="timer-zone">
-                    <div id="current-agenda-title">点击"议程"添加第一个议题</div>
-                    <div id="timer-display">00:00</div>
-                    <div id="timer-status"></div>
-                </section>
-
-                <!-- 底部控制栏 -->
-                <div id="control-bar">
-                    <button class="control-btn primary" id="btn-start">开始</button>
-                    <button class="control-btn" id="btn-skip">跳过</button>
-                    <button class="control-btn toggle" id="btn-overtime">
-                        <span class="toggle-label">超时延长</span>
-                        <span class="toggle-switch off"></span>
-                    </button>
-                </div>
-            </main>
-
-            <!-- 侧边栏 -->
-            <aside id="sidebar" class="collapsed">
-                <!-- ... sidebar content ... -->
-                <div id="sidebar-header">
-                    <span>议程列表</span>
-                    <button class="sidebar-close-btn" id="btn-sidebar-close">×</button>
-                </div>
-                <div id="list-zone"></div>
-                <div class="sidebar-footer">
-                    <button class="action-btn add-btn" id="btn-add-agenda">
-                        <span class="icon">+</span> 添加议程
-                    </button>
-                    <button class="action-btn archive-btn" id="btn-archive-agenda" title="归档当日议程">
-                        <span class="icon">📂</span> 归档
-                    </button>
-                </div>
-            </aside>
-        </div>
-
-        <!-- 弹窗遮罩 -->
-        <div id="popup-overlay" class="hidden">
-
-            <!-- 1. 议程管理中心 (New) -->
-            <div id="popup-agenda-manager" class="popup-card popup-agenda-manager hidden">
-                <!-- ... content ... -->
-                <div class="modal-sidebar" id="modal-sidebar">
-                    <div class="sidebar-title">议程管理</div>
-                    <div class="modal-nav-item active" data-tab="new">
-                        <span>📝</span> 新增会议议程
-                    </div>
-                    <div class="modal-nav-item" data-tab="history">
-                        <span>📅</span> 历史议程表
-                    </div>
-                </div>
-
-                <!-- Resizer 1: Between sidebar and content -->
-                <div class="panel-resizer" id="resizer-sidebar"></div>
-
-                <div class="modal-content" id="modal-content">
-                    <!-- Tab 1: 新增议程 -->
-                    <div id="section-new-agenda" class="tab-section active">
-                        <h3>新增会议议程</h3>
-                        <div class="form-group">
-                            <label for="input-title">议题名称</label>
-                            <input type="text" id="input-title" placeholder="例如：项目介绍">
-                        </div>
-                        <div class="form-group">
-                            <label for="input-duration">计划时长 (分钟)</label>
-                            <input type="number" id="input-duration" placeholder="5" min="1" value="5">
-                        </div>
-                        <div class="popup-actions center-actions">
-                            <button class="popup-btn confirm" id="btn-confirm-add"
-                                style="max-width: 200px;">开始议程</button>
+                    <div class="header-center drag-region"></div>
+                    <div class="header-right">
+                        <div id="header-toolbar" class="header-toolbar">
+                            <button class="header-btn" id="btn-review" title="复盘">
+                                <span class="icon">📊</span>
+                                <span class="label">复盘</span>
+                            </button>
+                            <button class="header-btn" id="btn-reset" title="重置">
+                                <span class="icon">🔄</span>
+                                <span class="label">重置</span>
+                            </button>
+                            <button class="header-btn" id="btn-manage" title="议程管理">
+                                <span class="icon">📅</span>
+                                <span class="label">管理</span>
+                            </button>
+                            <button class="header-btn" id="btn-list" title="待办列表">
+                                <span class="icon">☰</span>
+                                <span class="label">当日议程</span>
+                            </button>
+                            <button class="header-btn" id="btn-appearance" title="外观设置">
+                                <span class="icon">🎨</span>
+                                <span class="label">外观</span>
+                            </button>
+                            <button class="header-btn" id="btn-alert" title="提醒设置">
+                                <span class="icon">🔔</span>
+                                <span class="label">提醒</span>
+                            </button>
                         </div>
                     </div>
+                    <button class="window-btn close-btn" id="btn-close" title="关闭">×</button>
+                </header>
 
-                    <!-- Tab 2: 历史记录 -->
-                    <div id="section-history-agenda" class="tab-section hidden">
-                        <div class="history-layout">
-                            <!-- Left: Calendar -->
-                            <div class="calendar-section" id="calendar-section">
-                                <div class="calendar-header">
-                                    <button class="header-btn" id="btn-prev-month">&lt;</button>
-                                    <span id="calendar-current-month"></span>
-                                    <button class="header-btn" id="btn-next-month">&gt;</button>
-                                </div>
-                                <div class="calendar-grid" id="calendar-grid">
-                                    <!-- Generated by JS -->
-                                </div>
-                            </div>
+                <!-- 主内容区 -->
+                <main id="main-content">
+                    <!-- 计时区域 -->
+                    <section id="timer-zone">
+                        <div id="current-agenda-title">点击"议程"添加第一个议题</div>
+                        <div id="timer-display">00:00</div>
+                        <div id="timer-status"></div>
+                    </section>
 
-                            <!-- Resizer 2: Between calendar and history list -->
-                            <div class="panel-resizer vertical" id="resizer-calendar"></div>
-
-                            <!-- Right: List -->
-                            <div class="history-list-section" id="history-list-section">
-                                <div class="history-title-bar">
-                                    <span class="history-date-label" id="history-selected-date">请选择日期</span>
-                                </div>
-                                <div id="history-list-container">
-                                    <!-- Generated by JS -->
-                                </div>
-                            </div>
-                        </div>
+                    <!-- 底部控制栏 -->
+                    <div id="control-bar">
+                        <button class="control-btn primary" id="btn-start">开始</button>
+                        <button class="control-btn" id="btn-skip">跳过</button>
+                        <button class="control-btn toggle" id="btn-overtime">
+                            <span class="toggle-label">超时延长</span>
+                            <span class="toggle-switch off"></span>
+                        </button>
                     </div>
-                </div>
+                </main>
 
-                <button class="close-popup-btn" id="btn-close-manager">×</button>
+                <!-- 侧边栏 -->
+                <aside id="sidebar" class="collapsed">
+                    <!-- ... sidebar content ... -->
+                    <div id="sidebar-header">
+                        <span>议程列表</span>
+                        <button class="sidebar-close-btn" id="btn-sidebar-close">×</button>
+                    </div>
+                    <div id="list-zone"></div>
+                    <div class="sidebar-footer">
+                        <button class="action-btn add-btn" id="btn-add-agenda">
+                            <span class="icon">+</span> 添加议程
+                        </button>
+                        <button class="action-btn archive-btn" id="btn-archive-agenda" title="归档当日议程">
+                            <span class="icon">📂</span> 归档
+                        </button>
+                    </div>
+                </aside>
             </div>
 
-            <!-- 2. 外观设置弹窗 -->
-            <div id="popup-appearance" class="popup-card popup-appearance hidden">
-                <h3>外观设置</h3>
+            <!-- 弹窗遮罩 -->
+            <div id="popup-overlay" class="hidden">
 
-                <!-- ===== 倒计时区域 ===== -->
-                <div class="appearance-group">
-                    <div class="group-title">📊 倒计时</div>
-
-                    <!-- 倒计时字体颜色 -->
-                    <div class="appearance-section">
-                        <div class="section-label">字体颜色</div>
-                        <div class="color-picker-row">
-                            <input type="color" id="input-timer-color" class="color-input" value="#00ff00">
-                            <div class="color-gradient" id="timer-color-gradient"></div>
-                            <div class="color-preview-timer" id="timer-color-preview">05:30</div>
+                <!-- 1. 议程管理中心 (New) -->
+                <div id="popup-agenda-manager" class="popup-card popup-agenda-manager hidden">
+                    <!-- ... content ... -->
+                    <div class="modal-sidebar" id="modal-sidebar">
+                        <div class="sidebar-title">议程管理</div>
+                        <div class="modal-nav-item active" data-tab="new">
+                            <span>📝</span> 新增会议议程
+                        </div>
+                        <div class="modal-nav-item" data-tab="history">
+                            <span>📅</span> 历史议程表
                         </div>
                     </div>
 
-                    <!-- 倒计时字体大小 -->
-                    <div class="appearance-section">
-                        <div class="section-label">字体大小</div>
-                        <div class="slider-container">
-                            <span class="slider-min">40px</span>
-                            <input type="range" id="input-timer-size" class="styled-slider" min="40" max="400"
-                                value="80" list="timer-size-marks">
-                            <datalist id="timer-size-marks">
-                                <option value="40"></option>
-                                <option value="80"></option>
-                                <option value="120"></option>
-                                <option value="160"></option>
-                                <option value="200"></option>
-                                <option value="300"></option>
-                                <option value="400"></option>
-                            </datalist>
-                            <span class="slider-max">400px</span>
+                    <!-- Resizer 1: Between sidebar and content -->
+                    <div class="panel-resizer" id="resizer-sidebar"></div>
+
+                    <div class="modal-content" id="modal-content">
+                        <!-- Tab 1: 新增议程 -->
+                        <div id="section-new-agenda" class="tab-section active">
+                            <h3>新增会议议程</h3>
+                            <div class="form-group">
+                                <label for="input-title">议题名称</label>
+                                <input type="text" id="input-title" placeholder="例如：项目介绍">
+                            </div>
+                            <div class="form-group">
+                                <label for="input-duration">计划时长 (分钟)</label>
+                                <input type="number" id="input-duration" placeholder="5" min="1" value="5">
+                            </div>
+                            <div class="popup-actions center-actions">
+                                <button class="popup-btn confirm" id="btn-confirm-add"
+                                    style="max-width: 200px;">开始议程</button>
+                            </div>
                         </div>
-                        <div class="size-preview">
-                            <span id="timer-size-preview">05:30</span>
+
+                        <!-- Tab 2: 历史记录 -->
+                        <div id="section-history-agenda" class="tab-section hidden">
+                            <div class="history-layout">
+                                <!-- Left: Calendar -->
+                                <div class="calendar-section" id="calendar-section">
+                                    <div class="calendar-header">
+                                        <button class="header-btn" id="btn-prev-month">&lt;</button>
+                                        <span id="calendar-current-month"></span>
+                                        <button class="header-btn" id="btn-next-month">&gt;</button>
+                                    </div>
+                                    <div class="calendar-grid" id="calendar-grid">
+                                        <!-- Generated by JS -->
+                                    </div>
+                                </div>
+
+                                <!-- Resizer 2: Between calendar and history list -->
+                                <div class="panel-resizer vertical" id="resizer-calendar"></div>
+
+                                <!-- Right: List -->
+                                <div class="history-list-section" id="history-list-section">
+                                    <div class="history-title-bar">
+                                        <span class="history-date-label" id="history-selected-date">请选择日期</span>
+                                    </div>
+                                    <div id="history-list-container">
+                                        <!-- Generated by JS -->
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <button class="close-popup-btn" id="btn-close-manager">×</button>
                 </div>
 
-                <!-- ===== 界面元素区域 ===== -->
-                <div class="appearance-group">
-                    <div class="group-title">🎨 界面元素</div>
+                <!-- 2. 外观设置弹窗 -->
+                <div id="popup-appearance" class="popup-card popup-appearance hidden">
+                    <h3>外观设置</h3>
 
-                    <!-- UI字体颜色 -->
-                    <div class="appearance-section">
-                        <div class="section-label">字体颜色</div>
-                        <div class="color-picker-row">
-                            <input type="color" id="input-ui-color" class="color-input" value="#ffffff">
-                            <div class="color-gradient" id="ui-color-gradient"></div>
-                            <div class="color-preview-ui" id="ui-color-preview">按钮预览</div>
+                    <!-- ===== 倒计时区域 ===== -->
+                    <div class="appearance-group">
+                        <div class="group-title">📊 倒计时</div>
+
+                        <!-- 倒计时字体颜色 -->
+                        <div class="appearance-section">
+                            <div class="section-label">字体颜色</div>
+                            <div class="color-picker-row">
+                                <input type="color" id="input-timer-color" class="color-input" value="#00ff00">
+                                <div class="color-gradient" id="timer-color-gradient"></div>
+                                <div class="color-preview-timer" id="timer-color-preview">05:30</div>
+                            </div>
+                        </div>
+
+                        <!-- 倒计时字体大小 -->
+                        <div class="appearance-section">
+                            <div class="section-label">字体大小</div>
+                            <div class="slider-container">
+                                <span class="slider-min">40px</span>
+                                <input type="range" id="input-timer-size" class="styled-slider" min="40" max="400"
+                                    value="80" list="timer-size-marks">
+                                <datalist id="timer-size-marks">
+                                    <option value="40"></option>
+                                    <option value="80"></option>
+                                    <option value="120"></option>
+                                    <option value="160"></option>
+                                    <option value="200"></option>
+                                    <option value="300"></option>
+                                    <option value="400"></option>
+                                </datalist>
+                                <span class="slider-max">400px</span>
+                            </div>
+                            <div class="size-preview">
+                                <span id="timer-size-preview">05:30</span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- UI字体大小 -->
-                    <div class="appearance-section">
+                    <!-- ===== 界面元素区域 ===== -->
+                    <div class="appearance-group">
+                        <div class="group-title">🎨 界面元素</div>
+
+                        <!-- UI字体颜色 -->
+                        <div class="appearance-section">
+                            <div class="section-label">字体颜色</div>
+                            <div class="color-picker-row">
+                                <input type="color" id="input-ui-color" class="color-input" value="#ffffff">
+                                <div class="color-gradient" id="ui-color-gradient"></div>
+                                <div class="color-preview-ui" id="ui-color-preview">按钮预览</div>
+                            </div>
+                        </div>
+
+                        <!-- UI字体大小 -->
+                        <div class="appearance-section">
+                            <div class="section-header">
+                                <span class="section-label">字体大小</span>
+                                <span class="section-value" id="ui-size-value">14px</span>
+                            </div>
+                            <div class="slider-container">
+                                <span class="slider-min">12px</span>
+                                <input type="range" id="input-ui-size" class="styled-slider" min="12" max="24"
+                                    value="14" list="ui-size-marks">
+                                <datalist id="ui-size-marks">
+                                    <option value="12"></option>
+                                    <option value="14"></option>
+                                    <option value="16"></option>
+                                    <option value="18"></option>
+                                    <option value="20"></option>
+                                    <option value="24"></option>
+                                </datalist>
+                                <span class="slider-max">24px</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== 窗口透明度 ===== -->
+                    <div class="appearance-section" style="margin-top: 12px;">
                         <div class="section-header">
-                            <span class="section-label">字体大小</span>
-                            <span class="section-value" id="ui-size-value">14px</span>
+                            <span class="section-label">窗口透明度</span>
+                            <span class="section-value" id="opacity-value">100%</span>
                         </div>
                         <div class="slider-container">
-                            <span class="slider-min">12px</span>
-                            <input type="range" id="input-ui-size" class="styled-slider" min="12" max="24" value="14"
-                                list="ui-size-marks">
-                            <datalist id="ui-size-marks">
-                                <option value="12"></option>
-                                <option value="14"></option>
-                                <option value="16"></option>
-                                <option value="18"></option>
+                            <span class="slider-min">20%</span>
+                            <input type="range" id="input-opacity" class="styled-slider" min="20" max="100" value="100"
+                                list="opacity-marks">
+                            <datalist id="opacity-marks">
                                 <option value="20"></option>
-                                <option value="24"></option>
+                                <option value="40"></option>
+                                <option value="60"></option>
+                                <option value="80"></option>
+                                <option value="100"></option>
                             </datalist>
-                            <span class="slider-max">24px</span>
+                            <span class="slider-max">100%</span>
                         </div>
                     </div>
-                </div>
 
-                <!-- ===== 窗口透明度 ===== -->
-                <div class="appearance-section" style="margin-top: 12px;">
-                    <div class="section-header">
-                        <span class="section-label">窗口透明度</span>
-                        <span class="section-value" id="opacity-value">100%</span>
-                    </div>
-                    <div class="slider-container">
-                        <span class="slider-min">20%</span>
-                        <input type="range" id="input-opacity" class="styled-slider" min="20" max="100" value="100"
-                            list="opacity-marks">
-                        <datalist id="opacity-marks">
-                            <option value="20"></option>
-                            <option value="40"></option>
-                            <option value="60"></option>
-                            <option value="80"></option>
-                            <option value="100"></option>
-                        </datalist>
-                        <span class="slider-max">100%</span>
+                    <div class="popup-actions">
+                        <button class="popup-btn confirm" id="btn-save-appearance">保存</button>
+                        <button class="popup-btn cancel" id="btn-cancel-appearance">取消</button>
                     </div>
                 </div>
 
-                <div class="popup-actions">
-                    <button class="popup-btn confirm" id="btn-save-appearance">保存</button>
-                    <button class="popup-btn cancel" id="btn-cancel-appearance">取消</button>
-                </div>
-            </div>
+                <!-- 3. 提醒设置弹窗 -->
+                <div id="popup-alert" class="popup-card hidden">
+                    <h3>提醒设置</h3>
 
-            <!-- 3. 提醒设置弹窗 -->
-            <div id="popup-alert" class="popup-card hidden">
-                <h3>提醒设置</h3>
+                    <div class="form-row">
+                        <span class="form-label">倒计时预警(秒)</span>
+                        <input type="number" id="input-warning-seconds" class="input-small" placeholder="10" min="0"
+                            value="10">
+                    </div>
 
-                <div class="form-row">
-                    <span class="form-label">倒计时预警(秒)</span>
-                    <input type="number" id="input-warning-seconds" class="input-small" placeholder="10" min="0"
-                        value="10">
-                </div>
+                    <div class="form-row">
+                        <span class="form-label">声音提醒</span>
+                        <label class="switch">
+                            <input type="checkbox" id="input-sound-enabled" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
 
-                <div class="form-row">
-                    <span class="form-label">声音提醒</span>
-                    <label class="switch">
-                        <input type="checkbox" id="input-sound-enabled" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
-                <div class="preview-section">
-                    <div class="preview-label">Preview</div>
-                    <div class="preview-content">
-                        <div class="preview-timer">-00:15</div>
-                        <div class="alarm-icon">
-                            <div class="alarm-light"></div>
-                            <div class="alarm-base">🚨</div>
+                    <div class="preview-section">
+                        <div class="preview-label">Preview</div>
+                        <div class="preview-content">
+                            <div class="preview-timer">-00:15</div>
+                            <div class="alarm-icon">
+                                <div class="alarm-light"></div>
+                                <div class="alarm-base">🚨</div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="popup-actions">
-                    <button class="popup-btn cancel" id="btn-cancel-alert">取消</button>
-                    <button class="popup-btn confirm" id="btn-save-alert">保存</button>
+                    <div class="popup-actions">
+                        <button class="popup-btn cancel" id="btn-cancel-alert">取消</button>
+                        <button class="popup-btn confirm" id="btn-save-alert">保存</button>
+                    </div>
                 </div>
             </div>
         </div>
