@@ -656,29 +656,12 @@ function startTimer() {
 function showCountdownAnimation(callback) {
     const overlay = document.createElement('div');
     overlay.id = 'countdown-overlay';
-    overlay.style.cssText = `
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.8);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
+
+    overlay.innerHTML = `
+        <div id="countdown-text">3</div>
+        <div id="countdown-label">准备开始</div>
     `;
 
-    const countdownText = document.createElement('div');
-    countdownText.style.cssText = `
-        font-size: 150px;
-        font-weight: bold;
-        color: var(--blue);
-        text-shadow: 0 0 50px var(--blue);
-        animation: countdownPulse 1s ease-in-out;
-    `;
-
-    overlay.appendChild(countdownText);
     const scaler = $('app-scaler');
     if (scaler) {
         scaler.appendChild(overlay);
@@ -686,26 +669,39 @@ function showCountdownAnimation(callback) {
         document.body.appendChild(overlay);
     }
 
+    const countdownText = $('countdown-text');
     let count = 3;
-    countdownText.textContent = count;
+
+    // Initial pulse
+    countdownText.classList.add('countdown-pulse');
 
     const countInterval = setInterval(() => {
         count--;
         if (count > 0) {
             countdownText.textContent = count;
-            countdownText.style.animation = 'none';
-            countdownText.offsetHeight; // Trigger reflow
-            countdownText.style.animation = 'countdownPulse 1s ease-in-out';
+            countdownText.classList.remove('countdown-pulse');
+            void countdownText.offsetWidth; // Trigger reflow
+            countdownText.classList.add('countdown-pulse');
         } else {
             clearInterval(countInterval);
-            overlay.remove();
-            callback();
+            overlay.style.animation = 'fadeOut 0.4s ease-in forwards';
+            setTimeout(() => {
+                overlay.remove();
+                callback();
+            }, 400);
         }
     }, 1000);
 }
 
 function skipToNext() {
     if (agendas.length === 0) return;
+
+    // 停止当前计时
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    isRunning = false;
 
     const current = agendas[currentIndex];
     if (current && current.status !== 'done') {
@@ -717,16 +713,20 @@ function skipToNext() {
 
     if (currentIndex >= agendas.length) {
         // 全部完成
-        clearInterval(timerInterval);
-        timerInterval = null;
-        isRunning = false;
-        isPaused = false;
-        currentIndex = 0;
+        currentIndex = 0; // 重置到第一个，但保持已完成状态
         elements.timerStatus.textContent = '✅ 全部完成';
-    }
+        isPaused = false;
+        saveData();
+        syncUI();
+    } else {
+        // 准备下一个议程，显示 3s 倒计时
+        saveData();
+        syncUI();
 
-    saveData();
-    syncUI();
+        showCountdownAnimation(() => {
+            startTimer();
+        });
+    }
 }
 
 function resetAll() {

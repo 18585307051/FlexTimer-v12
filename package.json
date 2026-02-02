@@ -1,6 +1,6 @@
 {
-    "name": "flextimer-v11",
-    "version": "1.0.0",
+    "name": "flextimer-v12",
+    "version": "12.0.0",
     "description": "专业级会议/演示倒计时管理工具",
     "main": "main.js",
     "scripts": {
@@ -15,8 +15,8 @@
         "electron-builder": "22.10.5"
     },
     "build": {
-        "appId": "com.flextimer.v11",
-        "productName": "FlexTimer v11",
+        "appId": "com.flextimer.v12",
+        "productName": "FlexTimer v12",
         "directories": {
             "output": "dist"
         },
