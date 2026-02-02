@@ -5,3 +5,5 @@ dist/
 Thumbs.db
 github_config.txt
 .agent/
+dist_final/
+dist*
