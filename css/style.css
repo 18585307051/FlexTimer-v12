@@ -273,10 +273,10 @@ body {
 }
 
 #timer-display.warning {
-    color: var(--warning);
+    color: var(--danger);
     text-shadow:
-        0 0 20px rgba(250, 173, 20, 0.5),
-        0 0 60px rgba(250, 173, 20, 0.6);
+        0 0 20px rgba(255, 77, 79, 0.5),
+        0 0 60px rgba(255, 77, 79, 0.6);
     animation: pulse 1s ease-in-out infinite;
 }
 
