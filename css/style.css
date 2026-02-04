@@ -65,18 +65,26 @@ body {
     will-change: transform, left, top;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    /* Add border here so it scales with the content */
-    border: 1px solid var(--glass-border);
+
+    /* Hover Border Implementation */
+    border: 1px solid transparent;
     border-radius: 12px;
-    /* Add radius for better look */
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-    /* Add shadow for depth */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 
     /* Moved from app-root to ensure no scaling gaps */
     background: rgba(15, 20, 30, calc(0.9 * var(--bg-opacity)));
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
     overflow: hidden;
+}
+
+/* Show border on hover for L/R/B sides */
+#app-scaler:hover {
+    border-left-color: var(--glass-border);
+    border-right-color: var(--glass-border);
+    border-bottom-color: var(--glass-border);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.7);
 }
 
 /* ===== App Container ===== */
