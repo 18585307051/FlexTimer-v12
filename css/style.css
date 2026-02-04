@@ -79,12 +79,13 @@ body {
     overflow: hidden;
 }
 
-/* Show border on hover for L/R/B sides */
+/* Show border on hover for L/R/B sides using inset shock for better stability */
 #app-scaler:hover {
-    border-left-color: var(--glass-border);
-    border-right-color: var(--glass-border);
-    border-bottom-color: var(--glass-border);
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.7);
+    box-shadow:
+        0 0 40px rgba(0, 0, 0, 0.7),
+        inset 2px 0 0 var(--accent-cyan),
+        inset -2px 0 0 var(--accent-cyan),
+        inset 0 -2px 0 var(--accent-cyan);
 }
 
 /* ===== App Container ===== */
