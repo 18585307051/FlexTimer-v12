@@ -7,17 +7,21 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 800,
         height: 500,
-        minWidth: 200,
-        minHeight: 120,
+        minWidth: 400,
+        minHeight: 250,
         frame: false,
         transparent: true,
         resizable: true,
+        useContentSize: true, // Add this to better respect dimensions
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
             nodeIntegration: false
         }
     });
+
+    // Enforce Aspect Ratio
+    mainWindow.setAspectRatio(800 / 500);
 
     mainWindow.loadFile('index.html');
 
