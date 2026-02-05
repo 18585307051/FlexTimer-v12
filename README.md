@@ -5,14 +5,6 @@
 [![Version](https://img.shields.io/badge/version-12.0.0-blue.svg)](https://github.com/18585307051/FlexTimer-v12)
 ![主界面](doc/images/home.png)
 
----
-
-![议程管理](doc/images/agenda.png)
-
-![历史记录](doc/images/history.png)
-
-![超时预警](doc/images/warning.png)
-
 FlexTimer v12 是一款专为演讲者、会议主持人和教育工作者设计的计时器工具。它不仅是一个简单的倒计时器，更是一个集成了议程管理、历史回顾和外观自定义的全面会议助手。
 
 ## ✨ 核心特性
