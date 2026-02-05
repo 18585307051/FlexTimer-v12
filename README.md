@@ -3,12 +3,15 @@
 > **专业级会议与演示倒计时管理工具** —— 采用现代玻璃拟态 (Glassmorphism) UI 设计，为您提供无与伦比的视觉体验与极致的操作流畅感。
 
 [![Version](https://img.shields.io/badge/version-12.0.0-blue.svg)](https://github.com/18585307051/FlexTimer-v12)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+![主界面](doc/images/home.png)
 
 ---
 
-<!-- README_BANNER_PLACEHOLDER -->
-![FlexTimer Banner](https://via.placeholder.com/1200x400.png?text=FlexTimer+v12+Modern+Glassmorphism+UI)
+![议程管理](doc/images/agenda.png)
+
+![历史记录](doc/images/history.png)
+
+![超时预警](doc/images/warning.png)
 
 FlexTimer v12 是一款专为演讲者、会议主持人和教育工作者设计的计时器工具。它不仅是一个简单的倒计时器，更是一个集成了议程管理、历史回顾和外观自定义的全面会议助手。
 
@@ -26,11 +29,15 @@ FlexTimer v12 是一款专为演讲者、会议主持人和教育工作者设计
   - **CSV 导出**：一键生成复盘报告，提升会议效率。
 - 🚀 **性能卓越**：基于 Electron 构建的原生体验，极低资源占用。
 
-## 📸 界面预览
+## 📸 主要界面预览
 
-| 主计时界面 | 外观设置 |
+| 主计时界面 | 历史复盘 |
 | :---: | :---: |
-| ![Main UI Placeholder](https://via.placeholder.com/600x400.png?text=Main+Timer+Interface) | ![Settings UI Placeholder](https://via.placeholder.com/600x400.png?text=Settings+Panel) |
+| ![主界面](doc/images/home.png) | ![历史记录](doc/images/history.png) |
+| 新增议程 | 外观设计 |
+| ![新增议程](doc/user_manual.assets/image-20260205131113123.png) | ![外观设计](doc/user_manual.assets/image-20260205130654755.png) |
+| 倒计时告警设置 | 超时预警 |
+| ![倒计时告警设置](doc/user_manual.assets/image-20260205131352349.png) | ![超时预警](doc/images/warning.png) |
 
 ## 🛠️ 技术栈
 
