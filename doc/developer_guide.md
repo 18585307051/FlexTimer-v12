@@ -65,6 +65,10 @@ npm install
   - A: 检查 `script.js` 中的 `tick()` 函数是否被触发，确认 `setInterval` 没有被重复销毁或清理。
 - **Q: 样式没刷新？**
   - A: 检查 CSS 变量名是否正确拼写，确认 `syncUI()` 在设置更变后被调用。
+- **Q: 字体颜色在警告/超时状态下变红?**
+  - A: v12 已修复此问题。确保 CSS 中的 `.warning` 和 `.overtime` 类没有使用 `!important` 覆盖用户设置。
+- **Q: 倒计时动画层级异常?**
+  - A: 检查 `#countdown-overlay` 的 `z-index` 是否为 2000,`#timer-display` 是否设置了 `position: relative` 和 `z-index: 10`。
 
 ## 5. 打包发布
 本项目使用 `electron-builder` 进行打包。
@@ -72,3 +76,9 @@ npm install
 npm run build
 ```
 生成的 EXE 文件将自动包含主程序、资源文件及所有依赖。
+
+## 6. 最新更新 (v12.0.0 - 2026-02-05)
+- 修复了字体颜色设置在警告和超时状态下被强制覆盖的问题
+- 优化了计时器显示的 z-index 层级,确保倒计时动画正确显示
+- 改进了议程添加逻辑,移除了添加次数限制
+- 完善了错误处理和用户反馈机制
